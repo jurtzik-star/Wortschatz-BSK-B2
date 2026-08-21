@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wortschatztraining – BSK B2</title>
+<style>
+  :root{
+    --green-900:#2f5a45;
+    --green-700:#3f7a5c;
+    --green-600:#4b8a6c;
+    --green-500:#5fa17e;
+    --green-100:#e5f1eb;
+    --green-50:#f4f9f6;
+    --gold:#d3963e;
+    --red:#c0554a;
+    --ink:#233229;
+    --card:#ffffff;
+    --shadow:0 4px 14px rgba(47,90,69,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:linear-gradient(180deg,var(--green-50),#eef5f0 60%);
+    color:var(--ink);
+    min-height:100vh;
+  }
+  .app{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
+  header.top{
+    display:flex;align-items:center;gap:14px;
+    background:linear-gradient(120deg,var(--green-700),var(--green-500));
+    color:#fff;border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);
+    margin-bottom:20px;
+  }
+  header.top .badge{
+    width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex:none;
+  }
+  header.top h1{font-size:1.15rem;margin:0;line-height:1.3;}
+  header.top p{margin:2px 0 0;font-size:0.85rem;opacity:0.9;}
+  .card{
+    background:var(--card);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px;
+  }
+  .screen{display:none;}
+  .screen.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  label{display:block;font-weight:600;margin-bottom:6px;font-size:0.95rem;color:var(--green-900);}
+  input[type=text], select{
+    width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #cfe0d6;
+    font-size:1rem;margin-bottom:16px;background:#fbfdfc;
+  }
+  input[type=text]:focus, select:focus{outline:2px solid var(--green-500);border-color:var(--green-500);}
+  button{
+    font-family:inherit;cursor:pointer;border:none;border-radius:10px;
+    padding:11px 18px;font-size:0.98rem;font-weight:600;transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button:active{transform:scale(0.97);}
+  .btn-primary{background:var(--green-600);color:#fff;box-shadow:0 3px 10px rgba(75,138,108,0.35);}
+  .btn-primary:hover{background:var(--green-700);}
+  .btn-secondary{background:var(--green-100);color:var(--green-900);}
+  .btn-secondary:hover{background:#d7ebe0;}
+  .btn-ghost{background:transparent;color:var(--green-700);text-decoration:underline;padding:8px 4px;}
+  .row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:520px){.menu-grid{grid-template-columns:1fr;}}
+  .menu-item{
+    background:var(--card);border:2px solid var(--green-100);border-radius:14px;padding:16px;
+    cursor:pointer;text-align:left;box-shadow:var(--shadow);transition:border-color .15s ease, transform .12s ease;
+  }
+  .menu-item:hover{border-color:var(--green-500);transform:translateY(-2px);}
+  .menu-item .emoji{font-size:1.6rem;}
+  .menu-item h3{margin:8px 0 4px;font-size:1.02rem;color:var(--green-900);}
+  .menu-item p{margin:0;font-size:0.85rem;color:#5b6d62;}
+  .pill{
+    display:inline-block;background:var(--green-100);color:var(--green-900);
+    border-radius:999px;padding:3px 12px;font-size:0.78rem;font-weight:700;letter-spacing:.02em;
+  }
+  .topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+  .progress-wrap{background:#e3ede7;border-radius:999px;height:9px;overflow:hidden;margin:6px 0 18px;}
+  .progress-bar{background:var(--green-500);height:100%;width:0%;transition:width .25s ease;}
+  .word-display{
+    text-align:center;padding:22px 10px 6px;
+  }
+  .word-display .term{font-size:1.6rem;font-weight:800;color:var(--green-900);}
+  .word-display .section-tag{font-size:0.8rem;color:var(--gold);font-weight:700;letter-spacing:.05em;margin-bottom:6px;display:block;}
+  .translate-input{margin-top:18px;}
+  .flash-actions{display:flex;justify-content:center;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .quiz-options{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+  .quiz-options button{min-width:90px;}
+  .quiz-options button.opt-correct{background:var(--green-600);color:#fff;}
+  .quiz-options button.opt-wrong{background:#fbe6e3;color:var(--red);border:2px solid var(--red);}
+  .quiz-options button:disabled{opacity:0.55;cursor:default;}
+  .feedback{margin-top:14px;text-align:center;font-weight:700;min-height:24px;}
+  .feedback.correct{color:var(--green-700);}
+  .feedback.wrong{color:var(--red);}
+  input.input-error{border-color:var(--red) !important;background:#fdeceb;}
+  .shake{animation:shake .35s ease;}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-7px);}
+    40%,60%{transform:translateX(7px);}
+  }
+  .fill-sentence{font-size:1.15rem;text-align:center;line-height:1.7;margin:18px 0 6px;color:var(--green-900);}
+  .fill-sentence .gap{display:inline-block;min-width:90px;border-bottom:2px solid var(--green-500);}
+  .match-wrap{display:flex;gap:14px;}
+  .match-col{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .match-item{
+    border:2px solid var(--green-100);background:#fff;border-radius:10px;padding:10px 12px;
+    font-size:0.88rem;text-align:left;cursor:pointer;line-height:1.35;
+  }
+  .match-item.selected{border-color:var(--gold);background:#fdf3e3;}
+  .match-item.correct{border-color:var(--green-600);background:var(--green-100);color:var(--green-900);cursor:default;}
+  .match-item.wrong-flash{border-color:var(--red);background:#fbe6e3;}
+  table.wordlist{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  table.wordlist th, table.wordlist td{text-align:left;padding:8px 6px;border-bottom:1px solid #e3ede7;vertical-align:top;}
+  table.wordlist th{color:var(--green-900);font-size:0.78rem;text-transform:uppercase;letter-spacing:.03em;}
+  .check-icon{display:inline-block;margin-right:5px;font-size:0.85em;}
+  .check-ok{color:var(--green-700);}
+  .check-warn{color:var(--gold);}
+  .check-na{color:#9aa8a0;}
+  #checkStatus{font-size:0.82rem;color:#5b6d62;margin:8px 0 0;min-height:18px;}
+  #checkLegend{font-size:0.76rem;color:#7c8b81;margin:2px 0 10px;}
+  .score-box{
+    text-align:center;background:var(--green-100);border-radius:14px;padding:20px;margin:16px 0;
+  }
+  .score-box .big{font-size:2rem;font-weight:800;color:var(--green-900);}
+  .hint-text{font-size:0.82rem;color:#6d7d72;text-align:center;margin-top:8px;}
+  footer.note{text-align:center;font-size:0.78rem;color:#7c8b81;margin-top:24px;}
+  .chapter-card{
+    background:var(--card);border:2px solid var(--green-100);border-radius:14px;padding:18px;
+    cursor:pointer;text-align:left;box-shadow:var(--shadow);transition:border-color .15s ease, transform .12s ease;
+    margin-bottom:12px;
+  }
+  .chapter-card:hover{border-color:var(--green-500);transform:translateY(-2px);}
+  .chapter-card.current{border-color:var(--green-600);background:linear-gradient(120deg,var(--green-50),#fff);}
+  .chapter-card .chapnum{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:34px;height:34px;border-radius:50%;background:var(--green-100);color:var(--green-900);
+    font-weight:800;font-size:0.95rem;margin-right:10px;flex:none;
+  }
+  .chapter-card.current .chapnum{background:var(--green-600);color:#fff;}
+  .chapter-card .chaphead{display:flex;align-items:center;margin-bottom:6px;}
+  .chapter-card .chaptitle{font-weight:700;color:var(--green-900);font-size:1.02rem;}
+  .chapter-card .chapthemes{font-size:0.82rem;color:#5b6d62;margin:0 0 4px;}
+  .chapter-card .chapmeta{font-size:0.76rem;color:#8a978f;}
+  .section-label-small{font-size:0.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8a978f;margin:18px 0 8px;}
+  @media print{
+    header.top, .menu-grid, .row-btns, footer.note, #btnPrint{display:none !important;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="badge">📚</div>
+    <div>
+      <h1>Wortschatztraining – BSK B2</h1>
+      <p>Wichtige Wörter · Berufssprachkurs B2</p>
+    </div>
+  </header>
+
+  <!-- START SCREEN -->
+  <section id="screen-start" class="screen active">
+    <div class="card">
+      <p style="margin-top:0;">Willkommen! Bevor es losgeht, ein paar kurze Fragen.</p>
+      <p id="welcomeBack" class="hint-text" style="display:none;color:var(--green-700);font-weight:600;text-align:left;margin:0 0 12px;"></p>
+      <label for="inpName">Wie heißt du?</label>
+      <input type="text" id="inpName" placeholder="Dein Vorname">
+      <p id="nameError" class="hint-text" style="display:none;color:var(--red);text-align:left;margin:-10px 0 14px;">Bitte gib deinen Vornamen ein, damit deine Lehrkraft sehen kann, wer schon geübt hat.</p>
+
+      <label for="selLang">Was ist deine Muttersprache?</label>
+      <select id="selLang">
+        <option value="">– bitte auswählen –</option>
+        <option>Arabisch</option>
+        <option>Bulgarisch</option>
+        <option>Dari</option>
+        <option>Englisch</option>
+        <option>Farsi / Persisch</option>
+        <option>Französisch</option>
+        <option>Griechisch</option>
+        <option>Italienisch</option>
+        <option>Kurdisch</option>
+        <option>Polnisch</option>
+        <option>Portugiesisch</option>
+        <option>Rumänisch</option>
+        <option>Russisch</option>
+        <option>Serbisch/Kroatisch/Bosnisch</option>
+        <option>Spanisch</option>
+        <option>Thailändisch</option>
+        <option>Türkisch</option>
+        <option>Ukrainisch</option>
+        <option>Urdu</option>
+        <option>Vietnamesisch</option>
+        <option>Andere</option>
+      </select>
+      <div id="otherLangWrap" style="display:none;">
+        <label for="inpOtherLang">Welche Sprache?</label>
+        <input type="text" id="inpOtherLang" placeholder="z. B. Amharisch, Tigrinya ...">
+      </div>
+
+      <p class="hint-text" style="margin-bottom:0;">Dein Vorname und deine Übungszeit werden an deine Lehrkraft übermittelt, damit sie euren Lernfortschritt sehen kann. Deine Übersetzungen werden nur auf diesem Gerät gespeichert (Browser-Speicher), damit sie beim nächsten Öffnen noch da sind.</p>
+      <div class="row-btns">
+        <button class="btn-primary" id="btnStart">Los geht's →</button>
+      </div>
+      <p style="text-align:center;margin:16px 0 0;">
+        <button type="button" class="btn-ghost" id="btnClearData" style="font-size:0.78rem;">🗑️ Gespeicherte Daten auf diesem Gerät löschen</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- CHAPTER PICKER -->
+  <section id="screen-chapters" class="screen">
+    <div class="card">
+      <p style="margin:0 0 4px;">Hallo<span id="chGreetName"></span> 👋 Welches Kapitel möchtest du üben?</p>
+      <p class="hint-text" style="text-align:left;margin:0;">Du kannst jederzeit zwischen Kapiteln wechseln – deine Übersetzungen und Ergebnisse bleiben dabei erhalten.</p>
+    </div>
+    <div id="currentChapterWrap"></div>
+    <div id="pastChaptersWrap"></div>
+  </section>
+
+  <!-- MENU SCREEN -->
+  <section id="screen-menu" class="screen">
+    <div class="card">
+      <div class="topline" style="margin-bottom:0;">
+        <p style="margin:0 0 4px;">Hallo<span id="greetName"></span> 👋 Du übersetzt die Wörter auf <strong id="greetLang">Deutsch</strong>.</p>
+        <button class="btn-ghost" id="btnSwitchChapter" style="font-size:0.82rem;white-space:nowrap;">🔀 Kapitel wechseln</button>
+      </div>
+      <p class="hint-text" style="text-align:left;margin:0;" id="menuChapterHint">—</p>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-item" data-go="flashcards">
+        <span class="emoji">🗂️</span>
+        <h3>Karteikarten</h3>
+        <p>Wörter ansehen, selbst übersetzen und lernen.</p>
+        <p class="hint-text" id="scoreBadge-fc" style="text-align:left;display:none;margin:4px 0 0;"></p>
+      </div>
+      <div class="menu-item" data-go="article">
+        <span class="emoji">🎯</span>
+        <h3>Artikel-Quiz</h3>
+        <p>der, die oder das? Teste dein Wissen.</p>
+        <p class="hint-text" id="scoreBadge-art" style="text-align:left;display:none;margin:4px 0 0;"></p>
+      </div>
+      <div class="menu-item" data-go="gap">
+        <span class="emoji">✏️</span>
+        <h3>Lücken füllen</h3>
+        <p>Ergänze feste Wortverbindungen.</p>
+        <p class="hint-text" id="scoreBadge-gap" style="text-align:left;display:none;margin:4px 0 0;"></p>
+      </div>
+      <div class="menu-item" data-go="match">
+        <span class="emoji">🔗</span>
+        <h3>Zuordnen</h3>
+        <p>Verbinde Wort und Erklärung.</p>
+      </div>
+      <div class="menu-item" data-go="wordlist" style="grid-column:1/-1;">
+        <span class="emoji">📋</span>
+        <h3>Meine Wortliste</h3>
+        <p>Alle Wörter des Kapitels mit deinen eigenen Übersetzungen – zum Ausdrucken.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION PICKER (shared) -->
+  <section id="screen-section" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Zurück zum Menü</button>
+      </div>
+      <p style="margin-top:0;font-weight:700;color:var(--green-900);" id="sectionPickerTitle">Welche Wörter möchtest du üben?</p>
+      <div class="row-btns" id="sectionButtons"></div>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="screen-flashcards" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="fcCounter">1 / 1</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="fcProgress"></div></div>
+      <div class="word-display">
+        <span class="section-tag" id="fcSection">A</span>
+        <div class="term" id="fcClue" style="font-size:1.05rem;font-weight:600;">—</div>
+      </div>
+      <div class="quiz-options" id="fcOptions"></div>
+      <div class="feedback" id="fcFeedback"></div>
+      <div id="fcRevealBlock" style="display:none;">
+        <p style="text-align:center;font-weight:800;color:var(--green-900);margin:14px 0 0;" id="fcRevealTerm"></p>
+        <div class="translate-input">
+          <label id="fcTranslateLabel" for="fcTranslate">Möchtest du deine Übersetzung notieren? (optional)</label>
+          <input type="text" id="fcTranslate" placeholder="Deine Übersetzung ...">
+        </div>
+        <div class="flash-actions">
+          <button class="btn-primary" id="fcNext">Weiter →</button>
+        </div>
+      </div>
+      <p class="hint-text">Richtig beim ersten Versuch: <span id="fcKnownCount">0</span> / <span id="fcTotalSeen">0</span></p>
+    </div>
+  </section>
+
+  <!-- ARTICLE QUIZ -->
+  <section id="screen-article" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="artCounter">1 / 10</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="artProgress"></div></div>
+      <div class="word-display">
+        <span class="section-tag">Welcher Artikel?</span>
+        <div class="term" id="artNoun">—</div>
+      </div>
+      <div class="quiz-options">
+        <button class="btn-secondary" data-art="der">der</button>
+        <button class="btn-secondary" data-art="die">die</button>
+        <button class="btn-secondary" data-art="das">das</button>
+      </div>
+      <div class="row-btns" style="justify-content:center;">
+        <button class="btn-secondary" id="artHint">Tipp 💡</button>
+      </div>
+      <div class="feedback" id="artFeedback"></div>
+    </div>
+  </section>
+
+  <!-- GAP FILL -->
+  <section id="screen-gap" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="gapCounter">1 / 10</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="gapProgress"></div></div>
+      <p class="fill-sentence" id="gapSentence">—</p>
+      <div class="quiz-options" id="gapOptions"></div>
+      <div class="row-btns" style="justify-content:center;">
+        <button class="btn-secondary" id="gapHint">Tipp 💡</button>
+      </div>
+      <div class="feedback" id="gapFeedback"></div>
+    </div>
+  </section>
+
+  <!-- MATCHING -->
+  <section id="screen-match" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="matchCounter">0 / 6</span>
+      </div>
+      <p class="hint-text" style="margin-top:0;">Klicke zuerst ein Wort, dann die passende Erklärung.</p>
+      <div class="match-wrap">
+        <div class="match-col" id="matchWords"></div>
+        <div class="match-col" id="matchDefs"></div>
+      </div>
+      <div class="row-btns" id="matchDoneBtns" style="display:none;justify-content:center;">
+        <button class="btn-primary" id="matchAgain">Neue Runde 🔁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="screen-result" class="screen">
+    <div class="card">
+      <div class="score-box">
+        <div id="resultEmoji" style="font-size:2rem;">🎉</div>
+        <div class="big"><span id="resultScore">0</span>/<span id="resultTotal">0</span></div>
+        <p id="resultText">Gut gemacht!</p>
+      </div>
+      <div class="row-btns" style="justify-content:center;">
+        <button class="btn-secondary" data-back="menu">Zurück zum Menü</button>
+        <button class="btn-primary" id="resultRetry">Nochmal üben</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORDLIST -->
+  <section id="screen-wordlist" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <button class="btn-secondary" id="btnPrint">🖨️ Drucken</button>
+      </div>
+      <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;" id="wordlistTitle">Meine Wortliste</h2>
+      <div class="row-btns">
+        <button class="btn-secondary" id="btnCheckTranslations">🌐 Übersetzungen prüfen</button>
+      </div>
+      <p id="checkLegend" style="display:none;">✅ Übersetzung passt vermutlich &nbsp;·&nbsp; ⚠️ bitte selbst noch mal prüfen &nbsp;·&nbsp; 🔌 automatische Prüfung nicht möglich. Diese Prüfung ist eine automatische, unverbindliche Einschätzung (maschinelle Übersetzung) – bei Redewendungen oder Fachbegriffen kann sie ungenau sein.</p>
+      <p id="checkStatus"></p>
+      <table class="wordlist" id="wordlistTable">
+        <thead><tr><th>Wort</th><th>Abschn.</th><th>Meine Übersetzung</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="note">Wichtige Wörter · Erstellt von Thomas Jurtzik für den BSK-B2-Kurs</footer>
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const VOCAB = [
+  // ---- Kapitel 1 ----
+  {t:"der Absolvent, die Absolventen", s:"A", k:1},
+  {t:"die Absolventin, die Absolventinnen", s:"A", k:1},
+  {t:"sich anpassen an (+Akk.)", s:"A", k:1},
+  {t:"der Arbeitsberater, die Arbeitsberater", s:"A", k:1},
+  {t:"die Arbeitsberaterin, die Arbeitsberaterinnen", s:"A", k:1},
+  {t:"die Arbeitsteilung (Sg.)", s:"A", k:1},
+  {t:"die Arbeitswelt (Sg.)", s:"A", k:1},
+  {t:"aufgrund von (+Dat.)", s:"A", k:1},
+  {t:"die Bedeutung, die Bedeutungen", s:"A", k:1},
+  {t:"sich behaupten", s:"A", k:1},
+  {t:"der Berufsweg, die Berufswege", s:"A", k:1},
+  {t:"die Digitalisierung (Sg.)", s:"A", k:1},
+  {t:"sich einstellen auf (+Akk.)", s:"A", k:1},
+  {t:"erforderlich", s:"A", k:1},
+  {t:"etwas erwerben", s:"A", k:1},
+  {t:"der/die Erwerbstätige, die Erwerbstätigen", s:"A", k:1},
+  {t:"der Freiberufler, die Freiberufler", s:"A", k:1},
+  {t:"die Freiberuflerin, die Freiberuflerinnen", s:"A", k:1},
+  {t:"die Globalisierung (Sg.)", s:"A", k:1},
+  {t:"die Herausforderung, die Herausforderungen", s:"A", k:1},
+  {t:"interkulturelle Kompetenz", s:"A", k:1},
+  {t:"der Klimawandel (Sg.)", s:"A", k:1},
+  {t:"die Kompetenz, die Kompetenzen", s:"A", k:1},
+  {t:"modernisieren", s:"A", k:1},
+  {t:"die Neuorientierung, die Neuorientierungen", s:"A", k:1},
+  {t:"sich niederlassen", s:"A", k:1},
+  {t:"ökologisch", s:"A", k:1},
+  {t:"das Pausengespräch, die Pausengespräche", s:"A", k:1},
+  {t:"die Technologie, die Technologien", s:"A", k:1},
+  {t:"die Unterbrechung, die Unterbrechungen", s:"A", k:1},
+  {t:"das Unternehmen, die Unternehmen", s:"A", k:1},
+  {t:"veralten", s:"A", k:1},
+  {t:"vertrauen auf (+Akk.)", s:"A", k:1},
+  {t:"ambulant", s:"B", k:1},
+  {t:"das Berufsleben (Sg.)", s:"B", k:1},
+  {t:"das Beschwerdemanagement (Sg.)", s:"B", k:1},
+  {t:"der Betreuungsdienst, die Betreuungsdienste", s:"B", k:1},
+  {t:"der Bildungsgutschein, die Bildungsgutscheine", s:"B", k:1},
+  {t:"bisherig", s:"B", k:1},
+  {t:"eingehende Post", s:"B", k:1},
+  {t:"die Fachkraft, die Fachkräfte", s:"B", k:1},
+  {t:"die Fördermöglichkeit, die Fördermöglichkeiten", s:"B", k:1},
+  {t:"geeignet für (+Akk.)", s:"B", k:1},
+  {t:"die Haushaltsführung, die Haushaltsführungen", s:"B", k:1},
+  {t:"die Hilfskraft, die Hilfskräfte", s:"B", k:1},
+  {t:"die Kenntnis, die Kenntnisse", s:"B", k:1},
+  {t:"Kenntnisse erwerben", s:"B", k:1},
+  {t:"die Lagerliste, die Lagerlisten", s:"B", k:1},
+  {t:"der Lagerlogistiker, die Lagerlogistiker", s:"B", k:1},
+  {t:"die Lagerlogistikerin, die Lagerlogistikerinnen", s:"B", k:1},
+  {t:"der Lehrplan, die Lehrpläne", s:"B", k:1},
+  {t:"der Pflegedienst, die Pflegedienste", s:"B", k:1},
+  {t:"die Pflegeeinrichtung, die Pflegeeinrichtungen", s:"B", k:1},
+  {t:"die Pflegekraft, die Pflegekräfte", s:"B", k:1},
+  {t:"das Pflegezertifikat, die Pflegezertifikate", s:"B", k:1},
+  {t:"das Präsenzseminar, die Präsenzseminare", s:"B", k:1},
+  {t:"der Produktionshelfer, die Produktionshelfer", s:"B", k:1},
+  {t:"die Produktionshelferin, die Produktionshelferinnen", s:"B", k:1},
+  {t:"sich qualifizieren", s:"B", k:1},
+  {t:"die Sachkenntnis, die Sachkenntnisse", s:"B", k:1},
+  {t:"etwas vermitteln", s:"B", k:1},
+  {t:"zur Verfügung stehen", s:"B", k:1},
+  {t:"die Abfallvermeidung (Sg.)", s:"C", k:1},
+  {t:"der Anschluss, die Anschlüsse", s:"C", k:1},
+  {t:"der Bereich, die Bereiche", s:"C", k:1},
+  {t:"die Betriebsbesichtigung, die Betriebsbesichtigungen", s:"C", k:1},
+  {t:"das Betriebsgelände (Sg.)", s:"C", k:1},
+  {t:"etwas einführen", s:"C", k:1},
+  {t:"die Energieeinsparung, die Energieeinsparungen", s:"C", k:1},
+  {t:"der Entscheidungsspielraum, die Entscheidungsspielräume", s:"C", k:1},
+  {t:"etwas eröffnen", s:"C", k:1},
+  {t:"die Eröffnung, die Eröffnungen", s:"C", k:1},
+  {t:"die Erschließung (Sg.) (z. B. neuer Märkte)", s:"C", k:1},
+  {t:"etwas erweitern", s:"C", k:1},
+  {t:"die Fertigstellung (Sg.)", s:"C", k:1},
+  {t:"die Filiale, die Filialen", s:"C", k:1},
+  {t:"eine flache Hierarchie", s:"C", k:1},
+  {t:"das Geschäftsjahr, die Geschäftsjahre", s:"C", k:1},
+  {t:"das Gründungsdatum, die Gründungsdaten", s:"C", k:1},
+  {t:"die Hierarchie, die Hierarchien", s:"C", k:1},
+  {t:"im Anschluss an (+Akk.)", s:"C", k:1},
+  {t:"das Mitspracherecht, die Mitspracherechte", s:"C", k:1},
+  {t:"nachhaltig", s:"C", k:1},
+  {t:"etw. präsentieren", s:"C", k:1},
+  {t:"der Pressesprecher, die Pressesprecher", s:"C", k:1},
+  {t:"die Pressesprecherin, die Pressesprecherinnen", s:"C", k:1},
+  {t:"Produkte einführen", s:"C", k:1},
+  {t:"die Produktionsstätte, die Produktionsstätten", s:"C", k:1},
+  {t:"der Rundgang, die Rundgänge", s:"C", k:1},
+  {t:"das Sortiment, die Sortimente", s:"C", k:1},
+  {t:"der Standort, die Standorte", s:"C", k:1},
+  {t:"die Terminbestätigung, die Terminbestätigungen", s:"C", k:1},
+  {t:"etw. übernehmen", s:"C", k:1},
+  {t:"der Umsatz, die Umsätze", s:"C", k:1},
+  {t:"die Unternehmensgeschichte, die Unternehmensgeschichten", s:"C", k:1},
+  {t:"die Verkaufsfläche, die Verkaufsflächen", s:"C", k:1},
+  {t:"das Verkaufsgespräch, die Verkaufsgespräche", s:"C", k:1},
+  {t:"das Zentrallager, die Zentrallager", s:"C", k:1},
+  {t:"das Zweigwerk, die Zweigwerke", s:"C", k:1},
+  {t:"etw. anordnen", s:"D", k:1},
+  {t:"das Controlling (Sg.)", s:"D", k:1},
+  {t:"die Finanzabteilung, die Finanzabteilungen", s:"D", k:1},
+  {t:"die Fläche, die Flächen", s:"D", k:1},
+  {t:"die Forschung & Entwicklung (Sg.)", s:"D", k:1},
+  {t:"die Geschäftsleitung, die Geschäftsleitungen", s:"D", k:1},
+  {t:"der Hauptbereich, die Hauptbereiche", s:"D", k:1},
+  {t:"die Haustechnik (Sg.)", s:"D", k:1},
+  {t:"die Herstellung (Sg.)", s:"D", k:1},
+  {t:"die Hierarchieebene, die Hierarchieebenen", s:"D", k:1},
+  {t:"das Lager, die Lager", s:"D", k:1},
+  {t:"etw. leiten", s:"D", k:1},
+  {t:"das Marketing (Sg.)", s:"D", k:1},
+  {t:"die Marktuntersuchung, die Marktuntersuchungen", s:"D", k:1},
+  {t:"die Mitarbeiterzahl, die Mitarbeiterzahlen", s:"D", k:1},
+  {t:"die Öffentlichkeitsarbeit (Sg.)", s:"D", k:1},
+  {t:"das Organigramm, die Organigramme", s:"D", k:1},
+  {t:"das Produktionsverfahren, die Produktionsverfahren", s:"D", k:1},
+  {t:"die Qualitätssicherung (Sg.)", s:"D", k:1},
+  {t:"die Rechtsabteilung, die Rechtsabteilungen", s:"D", k:1},
+  {t:"die Spitze, die Spitzen", s:"D", k:1},
+  {t:"an der Spitze von (+Dat.)", s:"D", k:1},
+  {t:"untergeordnet", s:"D", k:1},
+  {t:"untergliedert", s:"D", k:1},
+  {t:"unterteilt", s:"D", k:1},
+  {t:"die Verkaufsförderung (Sg.)", s:"D", k:1},
+  {t:"der Vertrieb (Sg.)", s:"D", k:1},
+  {t:"die Verwaltung, die Verwaltungen", s:"D", k:1},
+  {t:"etw. zuordnen zu (+Dat.)", s:"D", k:1},
+  {t:"die Zuständigkeit, die Zuständigkeiten", s:"D", k:1},
+  {t:"die Anrede, die Anreden", s:"E", k:1},
+  {t:"distanzlos", s:"E", k:1},
+  {t:"das Du (Sg.)", s:"E", k:1},
+  {t:"sich duzen", s:"E", k:1},
+  {t:"der Kompromiss, die Kompromisse", s:"E", k:1},
+  {t:"einen Kompromiss finden", s:"E", k:1},
+  {t:"etw./jdn. respektieren", s:"E", k:1},
+  {t:"das Sie (Sg.)", s:"E", k:1},
+  {t:"sich siezen", s:"E", k:1},
+  {t:"jdm. das Du anbieten", s:"E", k:1},
+
+  // ---- Kapitel 6 ----
+  {t:"die Anweisung, die Anweisungen", s:"A", k:6},
+  {t:"das Ersatzfahrzeug, die Ersatzfahrzeuge", s:"A", k:6},
+  {t:"das Ersatzteil, die Ersatzteile", s:"A", k:6},
+  {t:"das Fahrzeug, die Fahrzeuge", s:"A", k:6},
+  {t:"der Gebrauchtwagen, die Gebrauchtwagen", s:"A", k:6},
+  {t:"die Gehaltsabrechnung, die Gehaltsabrechnungen", s:"A", k:6},
+  {t:"die Inspektion, die Inspektionen", s:"A", k:6},
+  {t:"jdn. kontaktieren", s:"A", k:6},
+  {t:"der Kundenservice (Sg.)", s:"A", k:6},
+  {t:"etw. lackieren", s:"A", k:6},
+  {t:"der Liefertermin, die Liefertermine", s:"A", k:6},
+  {t:"die Lieferverzögerung, die Lieferverzögerungen", s:"A", k:6},
+  {t:"der Montagetermin, die Montagetermine", s:"A", k:6},
+  {t:"der Neuwagen, die Neuwagen", s:"A", k:6},
+  {t:"preisgünstig", s:"A", k:6},
+  {t:"das Reifenlager, die Reifenlager", s:"A", k:6},
+  {t:"der Reparaturauftrag, die Reparaturaufträge", s:"A", k:6},
+  {t:"der Sommerreifen, die Sommerreifen", s:"A", k:6},
+  {t:"verhandeln", s:"A", k:6},
+  {t:"vermitteln", s:"A", k:6},
+  {t:"der Vertriebsleiter, die Vertriebsleiter", s:"A", k:6},
+  {t:"die Vertriebsleiterin, die Vertriebsleiterinnen", s:"A", k:6},
+  {t:"vor|gehen", s:"A", k:6},
+  {t:"der Wagenpark, die Wagenparks", s:"A", k:6},
+  {t:"das Werbegeschenk, die Werbegeschenke", s:"A", k:6},
+  {t:"den Wert schätzen", s:"A", k:6},
+  {t:"der Winterreifen, die Winterreifen", s:"A", k:6},
+  {t:"etw. anschaffen", s:"B", k:6},
+  {t:"auftauchen", s:"B", k:6},
+  {t:"daher", s:"B", k:6},
+  {t:"darum", s:"B", k:6},
+  {t:"die (technischen) Daten (Pl.)", s:"B", k:6},
+  {t:"dennoch", s:"B", k:6},
+  {t:"deshalb", s:"B", k:6},
+  {t:"deswegen", s:"B", k:6},
+  {t:"das Eigengewicht, die Eigengewichte", s:"B", k:6},
+  {t:"erforderlich", s:"B", k:6},
+  {t:"folglich", s:"B", k:6},
+  {t:"die Gewährleistung, die Gewährleistungen", s:"B", k:6},
+  {t:"die Geschwindigkeit, die Geschwindigkeiten", s:"B", k:6},
+  {t:"die Hebebühne, die Hebebühnen", s:"B", k:6},
+  {t:"die Hubhöhe, die Hubhöhen", s:"B", k:6},
+  {t:"die Kaufentscheidung, die Kaufentscheidungen", s:"B", k:6},
+  {t:"etw. lagern", s:"B", k:6},
+  {t:"die Lieferzeit, die Lieferzeiten", s:"B", k:6},
+  {t:"die Neuanschaffung, die Neuanschaffungen", s:"B", k:6},
+  {t:"das Qualitätsproblem, die Qualitätsprobleme", s:"B", k:6},
+  {t:"der Rabatt, die Rabatte", s:"B", k:6},
+  {t:"die Raumhöhe, die Raumhöhen", s:"B", k:6},
+  {t:"die Tragfähigkeit, die Tragfähigkeiten", s:"B", k:6},
+  {t:"trotzdem", s:"B", k:6},
+  {t:"überzeugend", s:"B", k:6},
+  {t:"die Wartung, die Wartungen", s:"B", k:6},
+  {t:"das Bedienungsproblem, die Bedienungsprobleme", s:"C", k:6},
+  {t:"etw. beheben (z. B. einen Fehler)", s:"C", k:6},
+  {t:"etw. beseitigen", s:"C", k:6},
+  {t:"der Defekt, die Defekte", s:"C", k:6},
+  {t:"das Display, die Displays", s:"C", k:6},
+  {t:"einerseits ..., andererseits ...", s:"C", k:6},
+  {t:"die Einstellung, die Einstellungen", s:"C", k:6},
+  {t:"die Elektronik (Sg.)", s:"C", k:6},
+  {t:"etw. entkalken", s:"C", k:6},
+  {t:"etw. erhitzen", s:"C", k:6},
+  {t:"etw. herunterladen", s:"C", k:6},
+  {t:"je ..., desto ...", s:"C", k:6},
+  {t:"der Kaffeesatzbehälter, die Kaffeesatzbehälter", s:"C", k:6},
+  {t:"die Mechanik (Sg.)", s:"C", k:6},
+  {t:"das Menü, die Menüs", s:"C", k:6},
+  {t:"etw. nachfüllen", s:"C", k:6},
+  {t:"die Programmierung, die Programmierungen", s:"C", k:6},
+  {t:"etw. reinigen", s:"C", k:6},
+  {t:"die Reinigungstablette, die Reinigungstabletten", s:"C", k:6},
+  {t:"etw. säubern", s:"C", k:6},
+  {t:"sowohl ... als auch ...", s:"C", k:6},
+  {t:"etw. starten", s:"C", k:6},
+  {t:"der Stillstand (Sg.)", s:"C", k:6},
+  {t:"die Störung, die Störungen", s:"C", k:6},
+  {t:"umgehend", s:"C", k:6},
+  {t:"etw. verwenden", s:"C", k:6},
+  {t:"etw. warten (z. B. eine Maschine)", s:"C", k:6},
+  {t:"zwar ..., aber ...", s:"C", k:6},
+  {t:"der (Drehmoment-)Schlüssel, die (Drehmoment-)Schlüssel", s:"D", k:6},
+  {t:"etw. abmontieren", s:"D", k:6},
+  {t:"der Aktionstag, die Aktionstage", s:"D", k:6},
+  {t:"etw. anheben", s:"D", k:6},
+  {t:"der Auszubildende, die Auszubildenden", s:"D", k:6},
+  {t:"die Auszubildende, die Auszubildenden", s:"D", k:6},
+  {t:"die Autobatterie, die Autobatterien", s:"D", k:6},
+  {t:"der Azubi, die Azubis", s:"D", k:6},
+  {t:"die Azubi, die Azubis", s:"D", k:6},
+  {t:"die Bremsflüssigkeit (Sg.)", s:"D", k:6},
+  {t:"die Drahtbürste, die Drahtbürsten", s:"D", k:6},
+  {t:"etw. eindrehen", s:"D", k:6},
+  {t:"etw. einfetten", s:"D", k:6},
+  {t:"etw. einfüllen", s:"D", k:6},
+  {t:"etw. einlagern", s:"D", k:6},
+  {t:"etw. erledigen", s:"D", k:6},
+  {t:"etw. festdrehen", s:"D", k:6},
+  {t:"die Fettkreide, die Fettkreiden", s:"D", k:6},
+  {t:"das Frostschutzmittel, die Frostschutzmittel", s:"D", k:6},
+  {t:"der Kratzer, die Kratzer", s:"D", k:6},
+  {t:"Kunden aufrufen", s:"D", k:6},
+  {t:"etw. lösen", s:"D", k:6},
+  {t:"die Mutter, die Muttern", s:"D", k:6},
+  {t:"etw. nachfüllen", s:"D", k:6},
+  {t:"der Ölstand (Sg.)", s:"D", k:6},
+  {t:"etw. platzieren", s:"D", k:6},
+  {t:"die Probefahrt, die Probefahrten", s:"D", k:6},
+  {t:"das Profil, die Profile", s:"D", k:6},
+  {t:"die Rabattaktion, die Rabattaktionen", s:"D", k:6},
+  {t:"das Radkreuz, die Radkreuze", s:"D", k:6},
+  {t:"die Radnabe, die Radnaben", s:"D", k:6},
+  {t:"der Reifendruck (Sg.)", s:"D", k:6},
+  {t:"das Reifenprofil, die Reifenprofile", s:"D", k:6},
+  {t:"der Reifenwechsel, die Reifenwechsel", s:"D", k:6},
+  {t:"der Schlagschrauber, die Schlagschrauber", s:"D", k:6},
+  {t:"die Schraube, die Schrauben", s:"D", k:6},
+  {t:"der Wagenheber, die Wagenheber", s:"D", k:6},
+  {t:"die Abgase (Pl.)", s:"E", k:6},
+  {t:"autonomes Fahren", s:"E", k:6},
+  {t:"etw. befürworten", s:"E", k:6},
+  {t:"das Carsharing (Sg.)", s:"E", k:6},
+  {t:"das Elektroauto, die Elektroautos", s:"E", k:6},
+  {t:"energieintensiv", s:"E", k:6},
+  {t:"erschweren", s:"E", k:6},
+  {t:"der Individualverkehr (Sg.)", s:"E", k:6},
+  {t:"der Klimawandel (Sg.)", s:"E", k:6},
+  {t:"die Lärmbelästigung (Sg.)", s:"E", k:6},
+  {t:"die Luftverschmutzung (Sg.)", s:"E", k:6},
+  {t:"die Mobilität (Sg.)", s:"E", k:6},
+  {t:"das Park-and-Ride(-System) (Sg.)", s:"E", k:6},
+  {t:"die Selbstverständlichkeit (Sg.)", s:"E", k:6},
+  {t:"etw. sperren", s:"E", k:6},
+  {t:"überflüssig", s:"E", k:6},
+  {t:"etw. überlasten", s:"E", k:6},
+  {t:"umsteigen auf (+Akk.)", s:"E", k:6},
+  {t:"umweltfreundlich", s:"E", k:6},
+  {t:"der Verbrennungsmotor, die Verbrennungsmotoren", s:"E", k:6},
+  {t:"das Verkehrsnetz, die Verkehrsnetze", s:"E", k:6},
+  {t:"verzichten auf (+Akk.)", s:"E", k:6},
+  {t:"Vorrang haben", s:"E", k:6},
+  {t:"jdn. zwingen", s:"E", k:6},
+
+  // ---- Kapitel 7 ----
+  {t:"die Bedienbarkeit (Sg.)", s:"A", k:7},
+  {t:"etw./jdn. bedienen", s:"A", k:7},
+  {t:"benutzerfreundlich", s:"A", k:7},
+  {t:"die Beseitigung (Sg.)", s:"A", k:7},
+  {t:"etw. betreiben", s:"A", k:7},
+  {t:"die Checkliste, die Checklisten", s:"A", k:7},
+  {t:"das Design, die Designs", s:"A", k:7},
+  {t:"effizient", s:"A", k:7},
+  {t:"etw. einstellen", s:"A", k:7},
+  {t:"haltbar", s:"A", k:7},
+  {t:"die Haltbarkeit (Sg.)", s:"A", k:7},
+  {t:"das Image (Sg.)", s:"A", k:7},
+  {t:"die Kundenbewertung, die Kundenbewertungen", s:"A", k:7},
+  {t:"langlebig", s:"A", k:7},
+  {t:"der Mangel, die Mängel", s:"A", k:7},
+  {t:"die Nachhaltigkeit (Sg.)", s:"A", k:7},
+  {t:"das Preis-Leistungs-Verhältnis, die Preis-Leistungs-Verhältnisse", s:"A", k:7},
+  {t:"das Qualitätsmanagement (Sg.)", s:"A", k:7},
+  {t:"das Qualitätsmerkmal, die Qualitätsmerkmale", s:"A", k:7},
+  {t:"die Qualitätssicherung (Sg.)", s:"A", k:7},
+  {t:"die Pauschalreise, die Pauschalreisen", s:"A", k:7},
+  {t:"das Regalbrett, die Regalbretter", s:"A", k:7},
+  {t:"die Sägemaschine, die Sägemaschinen", s:"A", k:7},
+  {t:"die Umweltfreundlichkeit (Sg.)", s:"A", k:7},
+  {t:"etw. vermeiden", s:"A", k:7},
+  {t:"wettbewerbsfähig", s:"A", k:7},
+  {t:"der Zusammenbau (Sg.)", s:"A", k:7},
+  {t:"etw. zusammenbauen", s:"A", k:7},
+  {t:"die Zuverlässigkeit (Sg.)", s:"A", k:7},
+  {t:"die Arbeitsfläche, die Arbeitsflächen", s:"B", k:7},
+  {t:"etw. auslösen (z. B. Krankheiten)", s:"B", k:7},
+  {t:"die Bakterie, die Bakterien", s:"B", k:7},
+  {t:"das Desinfektionsmittel, die Desinfektionsmittel", s:"B", k:7},
+  {t:"etw. desinfizieren", s:"B", k:7},
+  {t:"die Dienstkleidung, die Dienstkleidungen", s:"B", k:7},
+  {t:"der Einmalhandschuh, die Einmalhandschuhe", s:"B", k:7},
+  {t:"etw./jdn. einseifen", s:"B", k:7},
+  {t:"das Fieberthermometer, die Fieberthermometer", s:"B", k:7},
+  {t:"der Fingernagel, die Fingernägel", s:"B", k:7},
+  {t:"fließendes Wasser", s:"B", k:7},
+  {t:"der Funktionsraum, die Funktionsräume", s:"B", k:7},
+  {t:"etw./jdn. gefährden", s:"B", k:7},
+  {t:"die Hygiene (Sg.)", s:"B", k:7},
+  {t:"der Hygienebeauftragte, die Hygienebeauftragten", s:"B", k:7},
+  {t:"die Hygienebeauftragte, die Hygienebeauftragten", s:"B", k:7},
+  {t:"der Hygieneplan, die Hygienepläne", s:"B", k:7},
+  {t:"die Infektion, die Infektionen", s:"B", k:7},
+  {t:"etw. kontaminieren", s:"B", k:7},
+  {t:"der Krankheitserreger, die Krankheitserreger", s:"B", k:7},
+  {t:"die Pandemie, die Pandemien", s:"B", k:7},
+  {t:"der Pflegebereich, die Pflegebereiche", s:"B", k:7},
+  {t:"die Pflegekraft, die Pflegekräfte", s:"B", k:7},
+  {t:"die Qualitätssicherung (Sg.)", s:"B", k:7},
+  {t:"die Sanitäreinrichtung, die Sanitäreinrichtungen", s:"B", k:7},
+  {t:"etw./jdn. schützen vor (+Dat.)", s:"B", k:7},
+  {t:"der Stuhl (Sg.)", s:"B", k:7},
+  {t:"die Übertragung, die Übertragungen", s:"B", k:7},
+  {t:"der Urin, die Urine", s:"B", k:7},
+  {t:"die Verbreitung, die Verbreitungen", s:"B", k:7},
+  {t:"etw. verhindern", s:"B", k:7},
+  {t:"das Virus, die Viren", s:"B", k:7},
+  {t:"der Zwischenraum, die Zwischenräume", s:"B", k:7},
+  {t:"angespannt", s:"C", k:7},
+  {t:"anregend", s:"C", k:7},
+  {t:"das Arbeitsklima (Sg.)", s:"C", k:7},
+  {t:"die Atmosphäre (Sg.)", s:"C", k:7},
+  {t:"Aufgaben erfüllen", s:"C", k:7},
+  {t:"ausführlich", s:"C", k:7},
+  {t:"befreiend", s:"C", k:7},
+  {t:"etw./jdn. beurteilen", s:"C", k:7},
+  {t:"etw. bewerten", s:"C", k:7},
+  {t:"ehrlich", s:"C", k:7},
+  {t:"einfühlsam", s:"C", k:7},
+  {t:"emotional", s:"C", k:7},
+  {t:"ernst", s:"C", k:7},
+  {t:"etw. erreichen", s:"C", k:7},
+  {t:"etw. zur Diskussion stellen", s:"C", k:7},
+  {t:"Feedback geben", s:"C", k:7},
+  {t:"das Feedback, die Feedbacks", s:"C", k:7},
+  {t:"Fragen stellen", s:"C", k:7},
+  {t:"die Führungskraft, die Führungskräfte", s:"C", k:7},
+  {t:"die Gelegenheit ergreifen", s:"C", k:7},
+  {t:"harmonisch", s:"C", k:7},
+  {t:"hitzig", s:"C", k:7},
+  {t:"in Wut geraten", s:"C", k:7},
+  {t:"klärend", s:"C", k:7},
+  {t:"kollegial", s:"C", k:7},
+  {t:"die Kooperationsfähigkeit (Sg.)", s:"C", k:7},
+  {t:"Kritik üben", s:"C", k:7},
+  {t:"die Kundenorientierung (Sg.)", s:"C", k:7},
+  {t:"locker", s:"C", k:7},
+  {t:"offen", s:"C", k:7},
+  {t:"Protokoll führen", s:"C", k:7},
+  {t:"die Rückmeldung, die Rückmeldungen", s:"C", k:7},
+  {t:"Vereinbarungen treffen", s:"C", k:7},
+  {t:"das Verhalten (Sg.)", s:"C", k:7},
+  {t:"vertraulich", s:"C", k:7},
+  {t:"das Zielvereinbarungsgespräch, die Zielvereinbarungsgespräche", s:"C", k:7},
+  {t:"zur Sprache kommen", s:"C", k:7},
+  {t:"die (stationäre) Altenpflege (Sg.)", s:"D", k:7},
+  {t:"die Arbeitsbelastung, die Arbeitsbelastungen", s:"D", k:7},
+  {t:"etw. ausgleichen", s:"D", k:7},
+  {t:"etw. aushandeln", s:"D", k:7},
+  {t:"belastend", s:"D", k:7},
+  {t:"berechtigt", s:"D", k:7},
+  {t:"die Betriebsvereinbarung, die Betriebsvereinbarungen", s:"D", k:7},
+  {t:"etw. bewilligen", s:"D", k:7},
+  {t:"destruktiv", s:"D", k:7},
+  {t:"die Einschätzung, die Einschätzungen", s:"D", k:7},
+  {t:"sich einschleichen (z. B. ein Fehler hat sich eingeschlichen)", s:"D", k:7},
+  {t:"die Entlastung, die Entlastungen", s:"D", k:7},
+  {t:"die Fachkraft, die Fachkräfte", s:"D", k:7},
+  {t:"jdm. sind die Hände gebunden", s:"D", k:7},
+  {t:"gehetzt", s:"D", k:7},
+  {t:"der Gesundheitsschutz (Sg.)", s:"D", k:7},
+  {t:"der Heimleiter, die Heimleiter", s:"D", k:7},
+  {t:"die Heimleiterin, die Heimleiterinnen", s:"D", k:7},
+  {t:"die Leistungsgrenze (Sg.)", s:"D", k:7},
+  {t:"machtlos", s:"D", k:7},
+  {t:"die Mehrarbeit (Sg.)", s:"D", k:7},
+  {t:"peinlich", s:"D", k:7},
+  {t:"der Personalmangel (Sg.)", s:"D", k:7},
+  {t:"sachlich", s:"D", k:7},
+  {t:"der Tadel, die Tadel", s:"D", k:7},
+  {t:"jdm. etw. übel nehmen", s:"D", k:7},
+  {t:"unangenehm", s:"D", k:7},
+  {t:"etw. verbergen", s:"D", k:7},
+  {t:"versehentlich", s:"D", k:7},
+  {t:"etw./jdn. zurückweisen", s:"D", k:7},
+  {t:"sich etw. abgewöhnen", s:"E", k:7},
+  {t:"sich bemühen um (+Akk.)", s:"E", k:7},
+  {t:"die Beziehung, die Beziehungen", s:"E", k:7},
+  {t:"etw. erforschen", s:"E", k:7},
+  {t:"halten von (+Dat.)", s:"E", k:7},
+  {t:"die Ich-Botschaft, die Ich-Botschaften", s:"E", k:7},
+  {t:"klingen", s:"E", k:7},
+  {t:"nachgiebig", s:"E", k:7},
+  {t:"rotsehen", s:"E", k:7},
+  {t:"sanft", s:"E", k:7},
+  {t:"schädlich für (+Akk.)", s:"E", k:7},
+  {t:"das Tabu, die Tabus", s:"E", k:7},
+  {t:"ungewohnt", s:"E", k:7},
+  {t:"verständnisvoll", s:"E", k:7},
+  {t:"wahnsinnig", s:"E", k:7},
+  {t:"sich zurückziehen von (+Dat.)", s:"E", k:7}
+];
+
+const CLUES = [
+  // ---- Kapitel 1 ----
+  "Person, die eine Ausbildung oder ein Studium erfolgreich abgeschlossen hat (männlich)",
+  "Person, die eine Ausbildung oder ein Studium erfolgreich abgeschlossen hat (weiblich)",
+  "sich auf neue Bedingungen einstellen",
+  "Person, die beruflich zu Ausbildung und Beruf berät (männlich)",
+  "Person, die beruflich zu Ausbildung und Beruf berät (weiblich)",
+  "die Aufteilung von Aufgaben auf verschiedene Personen",
+  "der Bereich, in dem Menschen berufstätig sind",
+  "wegen, aus dem Grund von",
+  "der Sinn oder die Wichtigkeit von etwas",
+  "in einer schwierigen Situation erfolgreich bleiben",
+  "die berufliche Entwicklung/Laufbahn einer Person",
+  "die Umstellung von analogen auf digitale Prozesse",
+  "sich auf etwas vorbereiten",
+  "notwendig, benötigt",
+  "sich etwas aneignen, bekommen",
+  "eine Person, die berufstätig ist",
+  "jemand, der selbstständig arbeitet, oft ohne festen Arbeitgeber (männlich)",
+  "jemand, der selbstständig arbeitet, oft ohne festen Arbeitgeber (weiblich)",
+  "die weltweite Vernetzung von Wirtschaft und Gesellschaft",
+  "eine schwierige Aufgabe, die Mut oder Können erfordert",
+  "die Fähigkeit, mit Menschen aus anderen Kulturen gut zusammenzuarbeiten",
+  "die langfristige Veränderung des Erdklimas",
+  "eine Fähigkeit, die jemand besitzt",
+  "etwas auf den neuesten Stand bringen",
+  "ein neuer beruflicher Weg, eine neue Ausrichtung",
+  "an einem Ort einen Wohnsitz oder Betrieb gründen",
+  "umweltfreundlich, die Natur schonend",
+  "ein kurzes, informelles Gespräch in der Arbeitspause",
+  "die Anwendung von Wissenschaft in Maschinen und Verfahren",
+  "eine kurze Pause in einem Ablauf",
+  "eine Firma, ein Betrieb",
+  "nicht mehr aktuell oder zeitgemäß sein",
+  "sich auf etwas verlassen",
+  "ohne Übernachtung im Krankenhaus (Gegenteil: stationär)",
+  "das Leben und Arbeiten im Beruf",
+  "der professionelle Umgang mit Kundenbeschwerden",
+  "eine Einrichtung, die Menschen betreut und unterstützt",
+  "ein Dokument, mit dem eine Weiterbildung (mit)finanziert wird",
+  "bis jetzt, bis zu diesem Zeitpunkt",
+  "Briefe/Pakete, die ankommen",
+  "eine Person mit einer bestimmten beruflichen Qualifikation",
+  "eine Möglichkeit, finanzielle oder andere Unterstützung zu bekommen",
+  "gut passend für etwas",
+  "die Organisation und Erledigung der Aufgaben im Haushalt",
+  "eine Person, die unterstützende Tätigkeiten ohne spezielle Ausbildung übernimmt",
+  "das Wissen über ein bestimmtes Thema",
+  "sich Wissen aneignen",
+  "eine Liste über den Bestand im Lager",
+  "eine Person, die die Organisation im Lager plant (männlich)",
+  "eine Person, die die Organisation im Lager plant (weiblich)",
+  "ein Dokument, das die Lerninhalte eines Kurses festlegt",
+  "eine Einrichtung, die Pflege zu Hause anbietet",
+  "eine Institution, in der pflegebedürftige Menschen betreut werden",
+  "eine Person, die beruflich pflegt",
+  "ein Nachweis über eine Qualifikation im Pflegebereich",
+  "ein Kurs, an dem man persönlich vor Ort teilnimmt",
+  "eine Hilfskraft in der Produktion (männlich)",
+  "eine Hilfskraft in der Produktion (weiblich)",
+  "sich durch Ausbildung oder Fortbildung für eine Aufgabe geeignet machen",
+  "fundiertes Wissen über ein bestimmtes Fachgebiet",
+  "etwas weitergeben, erklären",
+  "verfügbar, erreichbar sein",
+  "Maßnahmen, um weniger Müll zu produzieren",
+  "eine Verbindung, z. B. an Strom oder Verkehrsmittel",
+  "ein Teilgebiet, ein Abschnitt",
+  "ein Besuch in einem Unternehmen, um es kennenzulernen",
+  "das Grundstück oder Gebäude, auf dem ein Unternehmen arbeitet",
+  "etwas Neues starten oder etablieren",
+  "die Reduzierung des Energieverbrauchs",
+  "der Freiraum, um eigene Entscheidungen zu treffen",
+  "den Start von etwas feiern, beginnen",
+  "der Beginn, der Start von etwas",
+  "das Zugänglichmachen von etwas, z. B. neuer Märkte",
+  "größer oder vielfältiger machen",
+  "der Abschluss der Arbeiten an etwas",
+  "eine Zweigstelle eines Unternehmens an einem anderen Standort",
+  "eine Organisationsstruktur mit wenigen Hierarchieebenen",
+  "der Zeitraum, für den ein Unternehmen seine Bilanz erstellt (meist 12 Monate)",
+  "der Tag, an dem ein Unternehmen gegründet wurde",
+  "die Rangordnung/Struktur von übergeordneten und untergeordneten Positionen",
+  "direkt danach, im Anschluss an etwas",
+  "das Recht, bei Entscheidungen mitzureden",
+  "auf lange Sicht umwelt- und ressourcenschonend",
+  "etwas vor anderen vorstellen",
+  "die Person, die offiziell für ein Unternehmen zur Presse spricht (männlich)",
+  "die Person, die offiziell für ein Unternehmen zur Presse spricht (weiblich)",
+  "neue Produkte auf den Markt bringen",
+  "der Ort, an dem produziert wird",
+  "ein Spaziergang durch einen Ort, um ihn kennenzulernen, z. B. durch eine Firma",
+  "die Gesamtheit der angebotenen Produkte eines Unternehmens",
+  "der Ort, an dem sich etwas (z. B. ein Unternehmen) befindet",
+  "die schriftliche Bestätigung eines vereinbarten Termins",
+  "eine Aufgabe oder Verantwortung annehmen",
+  "der Gesamtwert der verkauften Waren/Dienstleistungen in einem Zeitraum",
+  "die Entwicklung eines Unternehmens von der Gründung bis heute",
+  "der Bereich in einem Geschäft, in dem Waren verkauft werden",
+  "ein Gespräch zwischen Verkäufer:in und Kund:in mit dem Ziel eines Verkaufs",
+  "das zentrale Lager eines Unternehmens, von dem aus die Filialen beliefert werden",
+  "eine Produktionsstätte eines Unternehmens außerhalb des Hauptsitzes",
+  "eine Anweisung geben, etwas festlegen",
+  "die Planung, Steuerung und Kontrolle betrieblicher Abläufe und Finanzen",
+  "die Abteilung, die für die Finanzen eines Unternehmens zuständig ist",
+  "die Größe eines Raums oder Geländes",
+  "die Abteilung, die neue Produkte und Verfahren entwickelt",
+  "die Personen, die ein Unternehmen leiten",
+  "der wichtigste/zentrale Bereich eines Unternehmens",
+  "die technische Ausstattung und Wartung eines Gebäudes (z. B. Heizung, Strom)",
+  "die Produktion von Waren",
+  "eine Stufe innerhalb einer Hierarchie",
+  "ein Ort, an dem Waren aufbewahrt werden",
+  "die Verantwortung für etwas tragen, etwas führen",
+  "die Vermarktung von Produkten oder Dienstleistungen",
+  "eine systematische Untersuchung des Marktes",
+  "die Anzahl der Beschäftigten in einem Unternehmen",
+  "die Kommunikation eines Unternehmens mit der Öffentlichkeit",
+  "eine grafische Darstellung der Organisationsstruktur eines Unternehmens",
+  "die Methode/der Ablauf, mit dem etwas hergestellt wird",
+  "Maßnahmen, um eine gleichbleibend hohe Qualität zu gewährleisten",
+  "die Abteilung, die sich um rechtliche Angelegenheiten kümmert",
+  "die oberste Position in einer Hierarchie",
+  "in der obersten/führenden Position von etwas",
+  "einer höheren Position unterstellt",
+  "in kleinere Teile aufgeteilt",
+  "in mehrere Teile eingeteilt",
+  "Maßnahmen, um den Verkauf von Produkten zu steigern",
+  "die Abteilung, die für den Verkauf von Produkten zuständig ist",
+  "die Abteilung, die organisatorische/administrative Aufgaben erledigt",
+  "etwas einer bestimmten Kategorie oder Person zuweisen",
+  "der Bereich, für den jemand verantwortlich ist",
+  "die Art, wie man jemanden anspricht",
+  "ohne die übliche Distanz, sehr vertraut",
+  "die vertraute Anredeform",
+  "sich gegenseitig mit 'du' ansprechen",
+  "eine Einigung, bei der beide Seiten nachgeben",
+  "sich auf eine Lösung einigen, bei der beide Seiten nachgeben",
+  "etwas oder jemanden achten, anerkennen",
+  "die formelle/höfliche Anredeform",
+  "sich gegenseitig mit 'Sie' ansprechen",
+  "jemandem vorschlagen, sich zu duzen",
+
+  // ---- Kapitel 6 ----
+  "eine Anordnung oder Vorgabe, wie etwas zu tun ist",
+  "ein Fahrzeug, das man vorübergehend anstelle des eigenen nutzt (z. B. während einer Reparatur)",
+  "ein Teil, das ein defektes Teil an einem Fahrzeug/Gerät ersetzt",
+  "allgemeiner Begriff für Auto, Lkw usw.",
+  "ein bereits benutztes, nicht neues Auto",
+  "das Dokument, das den Lohn und die Abzüge eines Monats zeigt",
+  "die regelmäßige technische Überprüfung eines Fahrzeugs",
+  "sich mit jemandem in Verbindung setzen",
+  "die Abteilung, die sich um Fragen und Anliegen der Kunden kümmert",
+  "etwas mit Farbe/Lack bestreichen, z. B. ein Auto",
+  "der vereinbarte Zeitpunkt, an dem etwas geliefert wird",
+  "eine Verspätung bei der Lieferung",
+  "der vereinbarte Zeitpunkt für den Einbau/Aufbau von etwas",
+  "ein fabrikneues, noch nicht benutztes Auto",
+  "nicht teuer, zu einem günstigen Preis",
+  "ein Ort, an dem Reifen zwischengelagert werden",
+  "der Auftrag, etwas zu reparieren",
+  "ein Autoreifen für die warme Jahreszeit",
+  "über die Bedingungen von etwas (z. B. den Preis) diskutieren, um sich zu einigen",
+  "zwischen zwei Parteien eine Einigung oder einen Kontakt herstellen",
+  "die leitende Person im Verkauf/Vertrieb eines Unternehmens (männlich)",
+  "die leitende Person im Verkauf/Vertrieb eines Unternehmens (weiblich)",
+  "auf eine bestimmte Art und Weise handeln, um ein Ziel zu erreichen",
+  "alle Fahrzeuge, die einem Unternehmen gehören",
+  "ein kleines Geschenk mit Firmenlogo zu Werbezwecken",
+  "den Wert von etwas als hoch einschätzen, zu schätzen wissen",
+  "ein Autoreifen für die kalte Jahreszeit",
+  "etwas (meist Größeres) neu kaufen, sich etwas zulegen",
+  "plötzlich sichtbar werden, entstehen (z. B. ein Problem)",
+  "aus diesem Grund (kausaler Konnektor)",
+  "aus diesem Grund (kausaler Konnektor)",
+  "Zahlen und Angaben, die etwas genau beschreiben",
+  "trotzdem, obwohl (konzessiver Konnektor)",
+  "aus diesem Grund (kausaler Konnektor)",
+  "aus diesem Grund (kausaler Konnektor)",
+  "das Gewicht eines leeren Fahrzeugs/Geräts ohne Zuladung",
+  "notwendig, benötigt",
+  "als logische Folge, deshalb",
+  "die gesetzliche Garantie für die Qualität einer Ware",
+  "wie schnell sich etwas bewegt",
+  "eine technische Vorrichtung, um Fahrzeuge zur Reparatur anzuheben",
+  "die maximale Höhe, auf die etwas angehoben werden kann",
+  "die Entscheidung, ob und was man kauft",
+  "etwas an einem bestimmten Ort aufbewahren",
+  "die Zeitspanne bis zur Lieferung einer Ware",
+  "ein neu gekauftes Gerät oder Fahrzeug",
+  "ein Problem mit der Güte/Qualität eines Produkts",
+  "eine Preisermäßigung",
+  "die Höhe eines Raums, z. B. einer Werkstatt",
+  "die maximale Last, die etwas tragen kann",
+  "obwohl etwas dagegenspricht (konzessiver Konnektor)",
+  "so, dass es jemanden von etwas überzeugt",
+  "die regelmäßige Pflege und Kontrolle eines Geräts/Fahrzeugs",
+  "eine Schwierigkeit bei der Nutzung eines Geräts",
+  "einen Fehler oder ein Problem lösen",
+  "etwas entfernen, zum Verschwinden bringen",
+  "ein technischer Fehler, eine Störung",
+  "der Bildschirm/die Anzeige eines Geräts",
+  "Konnektor, der zwei gegensätzliche Aspekte gegenüberstellt",
+  "die Konfiguration/das Justieren eines Geräts",
+  "die elektronischen Bauteile eines Geräts",
+  "Kalkablagerungen aus einem Gerät entfernen",
+  "etwas heiß machen",
+  "Daten/Software aus dem Internet auf ein Gerät übertragen",
+  "Konnektor, der zwei proportionale Größen verbindet",
+  "der Behälter in einer Kaffeemaschine, in dem der benutzte Kaffeesatz landet",
+  "die mechanischen (beweglichen) Teile eines Geräts",
+  "die Auswahl an Funktionen/Optionen auf einem Display",
+  "etwas (z. B. Wasser) wieder auffüllen, wenn es leer wird",
+  "das Erstellen oder Einstellen eines Programms/Ablaufs",
+  "etwas sauber machen",
+  "eine Tablette, die zum Reinigen eines Geräts verwendet wird",
+  "etwas von Schmutz befreien",
+  "Konnektor, der zwei Dinge gleichzeitig einschließt",
+  "etwas in Betrieb setzen, einschalten",
+  "der Zustand, in dem etwas nicht arbeitet/funktioniert",
+  "eine Unterbrechung des normalen Betriebs",
+  "sofort, ohne Verzögerung",
+  "etwas benutzen, einsetzen",
+  "regelmäßig pflegen und kontrollieren, damit etwas funktionsfähig bleibt (z. B. eine Maschine)",
+  "Konnektor, der eine Aussage einschränkt oder ihr widerspricht",
+  "ein Werkzeug zum Festziehen von Schrauben mit einer bestimmten Kraft",
+  "ein Teil von etwas entfernen, ausbauen",
+  "ein Tag mit einem besonderen Angebot oder einer besonderen Aktion",
+  "etwas nach oben bewegen, hochheben",
+  "eine männliche Person, die eine berufliche Ausbildung macht",
+  "eine weibliche Person, die eine berufliche Ausbildung macht",
+  "die Batterie, die den Strom für ein Auto liefert",
+  "umgangssprachlich für: der Auszubildende",
+  "umgangssprachlich für: die Auszubildende",
+  "die Flüssigkeit, die im Bremssystem eines Fahrzeugs verwendet wird",
+  "eine Bürste mit Borsten aus Metall zum Entfernen von Rost o. Ä.",
+  "etwas (z. B. eine Schraube) drehend befestigen",
+  "Fett auf/in etwas auftragen",
+  "eine Flüssigkeit oder ein Mittel in etwas hineingeben",
+  "etwas für eine gewisse Zeit an einem Ort aufbewahren",
+  "eine Aufgabe fertig machen, abschließen",
+  "etwas durch Drehen fest anziehen",
+  "ein kreideartiges Mittel zum Markieren, das auch auf fettigen/öligen Oberflächen hält",
+  "ein Mittel, das eine Flüssigkeit vor dem Gefrieren schützt",
+  "eine kleine Beschädigung der Oberfläche, z. B. am Lack",
+  "Kundinnen und Kunden namentlich zu sich bitten, z. B. wenn sie an der Reihe sind",
+  "etwas (z. B. eine Schraube) locker machen",
+  "ein kleines Metallteil mit Gewinde, das auf eine Schraube gedreht wird",
+  "etwas (z. B. eine Flüssigkeit) wieder auffüllen, wenn es weniger wird",
+  "die Menge an Öl, die sich aktuell in einem Motor befindet",
+  "etwas an eine bestimmte Stelle stellen/legen",
+  "eine kurze Fahrt, um ein Fahrzeug zu testen",
+  "das Muster/die Rillen auf der Lauffläche eines Reifens",
+  "eine zeitlich begrenzte Aktion mit Preisermäßigung",
+  "ein kreuzförmiges Werkzeug zum Lösen und Anziehen von Radschrauben",
+  "der zentrale Teil eines Rades, an dem das Rad befestigt wird",
+  "der Luftdruck in einem Reifen",
+  "das Profil (die Rillen) auf einem Autoreifen",
+  "das Austauschen der Reifen an einem Fahrzeug",
+  "ein elektrisches/pneumatisches Werkzeug zum schnellen Lösen und Anziehen von Schrauben",
+  "ein Metallteil mit Gewinde zum Befestigen von Teilen",
+  "ein Werkzeug, mit dem man ein Fahrzeug anhebt, z. B. zum Reifenwechsel",
+  "die Gase, die z. B. ein Motor beim Verbrennen von Kraftstoff ausstößt",
+  "das selbstständige Fahren eines Fahrzeugs ohne menschlichen Fahrer",
+  "für etwas sein, etwas unterstützen",
+  "das gemeinsame Nutzen von Autos durch mehrere Personen, meist gegen Gebühr",
+  "ein Auto, das mit elektrischem Strom statt mit Verbrennungsmotor fährt",
+  "mit einem hohen Verbrauch an Energie verbunden",
+  "etwas schwieriger machen",
+  "der Verkehr mit privaten Fahrzeugen (im Gegensatz zum öffentlichen Verkehr)",
+  "die langfristige Veränderung des Erdklimas",
+  "eine störende Beeinträchtigung durch Lärm",
+  "die Verunreinigung der Luft durch Schadstoffe",
+  "die Möglichkeit, sich fortzubewegen",
+  "ein System, bei dem man mit dem Auto zu einem Parkplatz fährt und von dort mit öffentlichen Verkehrsmitteln weiterfährt",
+  "etwas, das man als normal und ohne Weiteres erwartet",
+  "den Zugang zu etwas verhindern, etwas blockieren",
+  "nicht notwendig, unnötig",
+  "etwas mit mehr belasten, als es aushält",
+  "von einer Sache zu einer anderen wechseln, z. B. von einem Verkehrsmittel zu einem anderen",
+  "die Umwelt wenig belastend",
+  "ein Motor, der Kraftstoff durch Verbrennung in Energie umwandelt",
+  "die Gesamtheit der Verkehrswege und -verbindungen in einem Gebiet",
+  "bewusst auf etwas nicht bestehen, etwas nicht nutzen",
+  "wichtiger sein, zuerst berücksichtigt werden",
+  "jemanden dazu bringen, etwas gegen seinen Willen zu tun",
+
+  // ---- Kapitel 7 ----
+  "wie einfach oder schwierig sich etwas bedienen lässt",
+  "ein Gerät benutzen bzw. sich um einen Kunden/eine Kundin kümmern",
+  "leicht zu bedienen, einfach im Gebrauch",
+  "das Entfernen von etwas (z. B. einem Problem)",
+  "etwas führen, ausüben (z. B. ein Geschäft)",
+  "eine Liste zum Abhaken einzelner Punkte",
+  "die Gestaltung, das äußere Erscheinungsbild von etwas",
+  "mit möglichst wenig Aufwand ein gutes Ergebnis erzielend",
+  "etwas auf einen bestimmten Wert oder Zustand bringen",
+  "so beschaffen, dass es lange verwendbar bleibt",
+  "wie lange etwas verwendbar bleibt",
+  "das Bild, das andere von etwas/jemandem haben",
+  "eine Einschätzung eines Produkts/einer Leistung durch Kund:innen",
+  "über einen langen Zeitraum funktionsfähig bleibend",
+  "ein Fehler oder ein Defekt an etwas",
+  "ein Handeln, das Ressourcen schont und die Zukunft berücksichtigt",
+  "wie gut der Preis im Vergleich zur gebotenen Leistung ist",
+  "die systematische Steuerung und Sicherung von Qualität in einem Betrieb",
+  "eine Eigenschaft, die die Qualität von etwas kennzeichnet",
+  "Maßnahmen, um eine gleichbleibend hohe Qualität zu gewährleisten",
+  "eine Reise, bei der Fahrt, Unterkunft usw. als Gesamtpaket gebucht werden",
+  "ein einzelnes Brett in einem Regal",
+  "eine Maschine zum Sägen von Material",
+  "wie wenig etwas der Umwelt schadet",
+  "dafür sorgen, dass etwas nicht passiert",
+  "im Vergleich mit anderen gut bestehen könnend",
+  "das Zusammensetzen einzelner Teile zu einem Ganzen",
+  "einzelne Teile zu einem Ganzen verbinden",
+  "die Eigenschaft, dass man sich auf etwas/jemanden verlassen kann",
+  "die Fläche, auf der gearbeitet wird (z. B. in Küche oder Pflege)",
+  "der Grund dafür sein, dass etwas beginnt",
+  "ein sehr kleiner Krankheitserreger",
+  "ein Mittel, das Keime abtötet",
+  "etwas keimfrei machen",
+  "die Kleidung, die man bei der Arbeit trägt",
+  "ein Handschuh, der nur einmal benutzt und dann weggeworfen wird",
+  "mit Seife einreiben",
+  "ein Gerät zum Messen der Körpertemperatur",
+  "der harte Teil am Ende des Fingers",
+  "Wasser, das direkt aus dem Wasserhahn kommt",
+  "ein Raum mit einer bestimmten Aufgabe (z. B. Lager, Bad) in einer Einrichtung",
+  "jemanden/etwas in Gefahr bringen",
+  "Maßnahmen zur Sauberkeit, um Krankheiten vorzubeugen",
+  "eine Person, die für die Einhaltung der Hygieneregeln zuständig ist (männlich)",
+  "eine Person, die für die Einhaltung der Hygieneregeln zuständig ist (weiblich)",
+  "ein Dokument mit den Hygieneregeln einer Einrichtung",
+  "das Eindringen und Vermehren von Krankheitserregern im Körper",
+  "etwas mit Keimen oder Schadstoffen verunreinigen",
+  "ein Mikroorganismus, der eine Krankheit auslösen kann",
+  "eine Krankheit, die sich weltweit ausbreitet",
+  "der Bereich, in dem Menschen gepflegt werden",
+  "eine Person, die beruflich pflegt",
+  "Maßnahmen, um eine gleichbleibend hohe Qualität zu gewährleisten",
+  "eine Einrichtung wie Toilette, Dusche oder Waschbecken",
+  "dafür sorgen, dass jemandem/etwas nichts Schlimmes passiert",
+  "medizinischer Fachbegriff für den festen Kot",
+  "das Weitergeben von etwas (z. B. einer Krankheit) an andere",
+  "die Flüssigkeit, die die Niere ausscheidet",
+  "das Sich-Ausbreiten von etwas",
+  "dafür sorgen, dass etwas nicht geschieht",
+  "ein sehr kleiner Erreger, der Infektionskrankheiten auslösen kann",
+  "der Platz zwischen zwei Dingen",
+  "nervös, unter Druck stehend",
+  "interessant und zum Nachdenken bringend",
+  "die allgemeine Stimmung an einem Arbeitsplatz",
+  "die Stimmung in einer Situation oder einem Raum",
+  "die eigenen Aufgaben vollständig erledigen",
+  "mit vielen Details, nicht kurz",
+  "so, dass man sich danach erleichtert fühlt",
+  "sich eine Meinung über etwas/jemanden bilden",
+  "eine Einschätzung zu etwas abgeben",
+  "die Wahrheit sagend, aufrichtig",
+  "mit Verständnis für die Gefühle anderer",
+  "von Gefühlen geprägt",
+  "nicht zum Scherzen aufgelegt, gewichtig",
+  "etwas schaffen, zu einem gewünschten Ergebnis kommen",
+  "ein Thema zum Besprechen vorschlagen",
+  "eine Rückmeldung zur Leistung von jemandem mitteilen",
+  "eine Rückmeldung zu einer Leistung oder einem Verhalten",
+  "um Informationen bitten",
+  "eine Person mit Leitungsverantwortung in einem Betrieb",
+  "eine passende Möglichkeit nutzen",
+  "in gutem Einklang, ohne Streit",
+  "schnell aufbrausend, emotional erregt",
+  "sehr wütend werden",
+  "dazu beitragend, ein Missverständnis aufzulösen",
+  "freundlich und fair im Umgang mit Kolleg:innen",
+  "die Fähigkeit, gut mit anderen zusammenzuarbeiten",
+  "eine kritische Rückmeldung geben",
+  "ein Verhalten, das sich an den Wünschen der Kund:innen ausrichtet",
+  "entspannt, nicht angespannt",
+  "bereit, ehrlich über etwas zu sprechen",
+  "schriftlich festhalten, was in einer Besprechung gesagt wird",
+  "eine Reaktion oder Antwort auf etwas",
+  "sich gemeinsam auf etwas einigen",
+  "die Art, wie sich jemand verhält",
+  "geheim, nicht für andere bestimmt",
+  "ein Gespräch, in dem gemeinsame Ziele festgelegt werden",
+  "in einem Gespräch thematisiert werden",
+  "die Pflege älterer Menschen in einer Einrichtung, in der sie auch wohnen",
+  "das Ausmaß an Anstrengung, das eine Arbeit mit sich bringt",
+  "einen Nachteil durch etwas anderes wettmachen",
+  "durch Verhandeln zu einer Einigung kommen",
+  "seelisch oder körperlich schwer zu ertragen",
+  "mit gutem Grund, gerechtfertigt",
+  "eine schriftliche Vereinbarung zwischen Betrieb und Belegschaft",
+  "etwas offiziell genehmigen",
+  "zerstörerisch, nicht konstruktiv",
+  "eine persönliche Meinung oder Bewertung",
+  "unbemerkt in etwas hineingeraten",
+  "eine Verringerung der Belastung",
+  "eine Person mit einer bestimmten beruflichen Qualifikation",
+  "jemand kann nicht handeln, wie er/sie möchte",
+  "unter Zeitdruck, in Eile",
+  "Maßnahmen zum Schutz der Gesundheit",
+  "die Person, die ein Heim (z. B. Pflegeheim) leitet (männlich)",
+  "die Person, die ein Heim (z. B. Pflegeheim) leitet (weiblich)",
+  "der Punkt, an dem die eigene Kraft nicht mehr ausreicht",
+  "ohne die Möglichkeit, etwas zu verändern",
+  "zusätzliche Arbeit über die normale Arbeitszeit hinaus",
+  "unangenehm, Scham auslösend",
+  "zu wenig Mitarbeiter:innen für die anfallende Arbeit",
+  "auf Fakten bezogen, ohne Emotionen",
+  "ein Vorwurf wegen eines Fehlverhaltens",
+  "sich über etwas ärgern, das jemand gesagt oder getan hat",
+  "nicht wohltuend, störend",
+  "etwas absichtlich nicht zeigen",
+  "aus Versehen, ohne Absicht",
+  "etwas ablehnen, nicht akzeptieren",
+  "eine schlechte Gewohnheit aufgeben",
+  "sich Mühe geben, etwas zu erreichen",
+  "die Verbindung zwischen zwei oder mehr Personen",
+  "etwas genau untersuchen",
+  "eine bestimmte Meinung über jemanden/etwas haben",
+  "eine Aussage, die die eigenen Gefühle statt Vorwürfe ausdrückt",
+  "einen bestimmten Eindruck beim Zuhören machen",
+  "schnell bereit, den eigenen Standpunkt aufzugeben",
+  "vor Wut die Beherrschung verlieren",
+  "freundlich und behutsam, nicht hart",
+  "negative Auswirkungen habend auf etwas",
+  "ein Thema, über das man nicht offen spricht",
+  "nicht wie sonst, neu und fremd",
+  "mit Verständnis für die Situation anderer",
+  "hier: sehr stark, extrem (umgangssprachlich)",
+  "sich aus etwas herausnehmen, Abstand nehmen"
+];
+
+const ARTICLE_ITEMS = [
+  {n:"Absolvent",a:"der",s:"A",k:1},
+  {n:"Absolventin",a:"die",s:"A",k:1},
+  {n:"Arbeitsberater",a:"der",s:"A",k:1},
+  {n:"Arbeitsberaterin",a:"die",s:"A",k:1},
+  {n:"Arbeitsteilung",a:"die",s:"A",k:1},
+  {n:"Arbeitswelt",a:"die",s:"A",k:1},
+  {n:"Bedeutung",a:"die",s:"A",k:1},
+  {n:"Berufsweg",a:"der",s:"A",k:1},
+  {n:"Digitalisierung",a:"die",s:"A",k:1},
+  {n:"Herausforderung",a:"die",s:"A",k:1},
+  {n:"Klimawandel",a:"der",s:"A",k:1},
+  {n:"Kompetenz",a:"die",s:"A",k:1},
+  {n:"Neuorientierung",a:"die",s:"A",k:1},
+  {n:"Pausengespräch",a:"das",s:"A",k:1},
+  {n:"Technologie",a:"die",s:"A",k:1},
+  {n:"Unterbrechung",a:"die",s:"A",k:1},
+  {n:"Unternehmen",a:"das",s:"A",k:1},
+  {n:"Freiberufler",a:"der",s:"A",k:1},
+  {n:"Freiberuflerin",a:"die",s:"A",k:1},
+  {n:"Globalisierung",a:"die",s:"A",k:1},
+  {n:"Berufsleben",a:"das",s:"B",k:1},
+  {n:"Beschwerdemanagement",a:"das",s:"B",k:1},
+  {n:"Betreuungsdienst",a:"der",s:"B",k:1},
+  {n:"Bildungsgutschein",a:"der",s:"B",k:1},
+  {n:"Fachkraft",a:"die",s:"B",k:1},
+  {n:"Fördermöglichkeit",a:"die",s:"B",k:1},
+  {n:"Haushaltsführung",a:"die",s:"B",k:1},
+  {n:"Hilfskraft",a:"die",s:"B",k:1},
+  {n:"Kenntnis",a:"die",s:"B",k:1},
+  {n:"Lagerliste",a:"die",s:"B",k:1},
+  {n:"Lagerlogistiker",a:"der",s:"B",k:1},
+  {n:"Lagerlogistikerin",a:"die",s:"B",k:1},
+  {n:"Lehrplan",a:"der",s:"B",k:1},
+  {n:"Pflegedienst",a:"der",s:"B",k:1},
+  {n:"Pflegeeinrichtung",a:"die",s:"B",k:1},
+  {n:"Pflegekraft",a:"die",s:"B",k:1},
+  {n:"Pflegezertifikat",a:"das",s:"B",k:1},
+  {n:"Präsenzseminar",a:"das",s:"B",k:1},
+  {n:"Produktionshelfer",a:"der",s:"B",k:1},
+  {n:"Produktionshelferin",a:"die",s:"B",k:1},
+  {n:"Sachkenntnis",a:"die",s:"B",k:1},
+  {n:"Abfallvermeidung",a:"die",s:"C",k:1},
+  {n:"Anschluss",a:"der",s:"C",k:1},
+  {n:"Bereich",a:"der",s:"C",k:1},
+  {n:"Betriebsbesichtigung",a:"die",s:"C",k:1},
+  {n:"Betriebsgelände",a:"das",s:"C",k:1},
+  {n:"Energieeinsparung",a:"die",s:"C",k:1},
+  {n:"Entscheidungsspielraum",a:"der",s:"C",k:1},
+  {n:"Eröffnung",a:"die",s:"C",k:1},
+  {n:"Erschließung",a:"die",s:"C",k:1},
+  {n:"Fertigstellung",a:"die",s:"C",k:1},
+  {n:"Filiale",a:"die",s:"C",k:1},
+  {n:"Geschäftsjahr",a:"das",s:"C",k:1},
+  {n:"Gründungsdatum",a:"das",s:"C",k:1},
+  {n:"Hierarchie",a:"die",s:"C",k:1},
+  {n:"Mitspracherecht",a:"das",s:"C",k:1},
+  {n:"Pressesprecher",a:"der",s:"C",k:1},
+  {n:"Pressesprecherin",a:"die",s:"C",k:1},
+  {n:"Produktionsstätte",a:"die",s:"C",k:1},
+  {n:"Rundgang",a:"der",s:"C",k:1},
+  {n:"Sortiment",a:"das",s:"C",k:1},
+  {n:"Standort",a:"der",s:"C",k:1},
+  {n:"Terminbestätigung",a:"die",s:"C",k:1},
+  {n:"Umsatz",a:"der",s:"C",k:1},
+  {n:"Unternehmensgeschichte",a:"die",s:"C",k:1},
+  {n:"Verkaufsfläche",a:"die",s:"C",k:1},
+  {n:"Verkaufsgespräch",a:"das",s:"C",k:1},
+  {n:"Zentrallager",a:"das",s:"C",k:1},
+  {n:"Zweigwerk",a:"das",s:"C",k:1},
+  {n:"Controlling",a:"das",s:"D",k:1},
+  {n:"Finanzabteilung",a:"die",s:"D",k:1},
+  {n:"Fläche",a:"die",s:"D",k:1},
+  {n:"Forschung & Entwicklung",a:"die",s:"D",k:1},
+  {n:"Geschäftsleitung",a:"die",s:"D",k:1},
+  {n:"Hauptbereich",a:"der",s:"D",k:1},
+  {n:"Haustechnik",a:"die",s:"D",k:1},
+  {n:"Herstellung",a:"die",s:"D",k:1},
+  {n:"Hierarchieebene",a:"die",s:"D",k:1},
+  {n:"Lager",a:"das",s:"D",k:1},
+  {n:"Marketing",a:"das",s:"D",k:1},
+  {n:"Marktuntersuchung",a:"die",s:"D",k:1},
+  {n:"Mitarbeiterzahl",a:"die",s:"D",k:1},
+  {n:"Öffentlichkeitsarbeit",a:"die",s:"D",k:1},
+  {n:"Organigramm",a:"das",s:"D",k:1},
+  {n:"Produktionsverfahren",a:"das",s:"D",k:1},
+  {n:"Qualitätssicherung",a:"die",s:"D",k:1},
+  {n:"Rechtsabteilung",a:"die",s:"D",k:1},
+  {n:"Spitze",a:"die",s:"D",k:1},
+  {n:"Verkaufsförderung",a:"die",s:"D",k:1},
+  {n:"Vertrieb",a:"der",s:"D",k:1},
+  {n:"Verwaltung",a:"die",s:"D",k:1},
+  {n:"Zuständigkeit",a:"die",s:"D",k:1},
+  {n:"Anrede",a:"die",s:"E",k:1},
+  {n:"Du",a:"das",s:"E",k:1},
+  {n:"Kompromiss",a:"der",s:"E",k:1},
+  {n:"Sie",a:"das",s:"E",k:1},
+  {n:"Anweisung",a:"die",s:"A",k:6},
+  {n:"Ersatzfahrzeug",a:"das",s:"A",k:6},
+  {n:"Ersatzteil",a:"das",s:"A",k:6},
+  {n:"Fahrzeug",a:"das",s:"A",k:6},
+  {n:"Gebrauchtwagen",a:"der",s:"A",k:6},
+  {n:"Gehaltsabrechnung",a:"die",s:"A",k:6},
+  {n:"Inspektion",a:"die",s:"A",k:6},
+  {n:"Kundenservice",a:"der",s:"A",k:6},
+  {n:"Liefertermin",a:"der",s:"A",k:6},
+  {n:"Lieferverzögerung",a:"die",s:"A",k:6},
+  {n:"Montagetermin",a:"der",s:"A",k:6},
+  {n:"Neuwagen",a:"der",s:"A",k:6},
+  {n:"Reifenlager",a:"das",s:"A",k:6},
+  {n:"Reparaturauftrag",a:"der",s:"A",k:6},
+  {n:"Sommerreifen",a:"der",s:"A",k:6},
+  {n:"Vertriebsleiter",a:"der",s:"A",k:6},
+  {n:"Vertriebsleiterin",a:"die",s:"A",k:6},
+  {n:"Wagenpark",a:"der",s:"A",k:6},
+  {n:"Werbegeschenk",a:"das",s:"A",k:6},
+  {n:"Winterreifen",a:"der",s:"A",k:6},
+  {n:"Eigengewicht",a:"das",s:"B",k:6},
+  {n:"Gewährleistung",a:"die",s:"B",k:6},
+  {n:"Geschwindigkeit",a:"die",s:"B",k:6},
+  {n:"Hebebühne",a:"die",s:"B",k:6},
+  {n:"Hubhöhe",a:"die",s:"B",k:6},
+  {n:"Kaufentscheidung",a:"die",s:"B",k:6},
+  {n:"Lieferzeit",a:"die",s:"B",k:6},
+  {n:"Neuanschaffung",a:"die",s:"B",k:6},
+  {n:"Qualitätsproblem",a:"das",s:"B",k:6},
+  {n:"Rabatt",a:"der",s:"B",k:6},
+  {n:"Raumhöhe",a:"die",s:"B",k:6},
+  {n:"Tragfähigkeit",a:"die",s:"B",k:6},
+  {n:"Wartung",a:"die",s:"B",k:6},
+  {n:"Bedienungsproblem",a:"das",s:"C",k:6},
+  {n:"Defekt",a:"der",s:"C",k:6},
+  {n:"Display",a:"das",s:"C",k:6},
+  {n:"Einstellung",a:"die",s:"C",k:6},
+  {n:"Elektronik",a:"die",s:"C",k:6},
+  {n:"Kaffeesatzbehälter",a:"der",s:"C",k:6},
+  {n:"Mechanik",a:"die",s:"C",k:6},
+  {n:"Menü",a:"das",s:"C",k:6},
+  {n:"Programmierung",a:"die",s:"C",k:6},
+  {n:"Reinigungstablette",a:"die",s:"C",k:6},
+  {n:"Stillstand",a:"der",s:"C",k:6},
+  {n:"Störung",a:"die",s:"C",k:6},
+  {n:"Schlüssel",a:"der",s:"D",k:6},
+  {n:"Aktionstag",a:"der",s:"D",k:6},
+  {n:"Autobatterie",a:"die",s:"D",k:6},
+  {n:"Bremsflüssigkeit",a:"die",s:"D",k:6},
+  {n:"Drahtbürste",a:"die",s:"D",k:6},
+  {n:"Fettkreide",a:"die",s:"D",k:6},
+  {n:"Frostschutzmittel",a:"das",s:"D",k:6},
+  {n:"Kratzer",a:"der",s:"D",k:6},
+  {n:"Mutter",a:"die",s:"D",k:6},
+  {n:"Ölstand",a:"der",s:"D",k:6},
+  {n:"Probefahrt",a:"die",s:"D",k:6},
+  {n:"Profil",a:"das",s:"D",k:6},
+  {n:"Rabattaktion",a:"die",s:"D",k:6},
+  {n:"Radkreuz",a:"das",s:"D",k:6},
+  {n:"Radnabe",a:"die",s:"D",k:6},
+  {n:"Reifendruck",a:"der",s:"D",k:6},
+  {n:"Reifenprofil",a:"das",s:"D",k:6},
+  {n:"Reifenwechsel",a:"der",s:"D",k:6},
+  {n:"Schlagschrauber",a:"der",s:"D",k:6},
+  {n:"Schraube",a:"die",s:"D",k:6},
+  {n:"Wagenheber",a:"der",s:"D",k:6},
+  {n:"Carsharing",a:"das",s:"E",k:6},
+  {n:"Elektroauto",a:"das",s:"E",k:6},
+  {n:"Individualverkehr",a:"der",s:"E",k:6},
+  {n:"Klimawandel",a:"der",s:"E",k:6},
+  {n:"Lärmbelästigung",a:"die",s:"E",k:6},
+  {n:"Luftverschmutzung",a:"die",s:"E",k:6},
+  {n:"Mobilität",a:"die",s:"E",k:6},
+  {n:"Park-and-Ride-System",a:"das",s:"E",k:6},
+  {n:"Selbstverständlichkeit",a:"die",s:"E",k:6},
+  {n:"Verbrennungsmotor",a:"der",s:"E",k:6},
+  {n:"Verkehrsnetz",a:"das",s:"E",k:6},
+  {n:"Bedienbarkeit",a:"die",s:"A",k:7},
+  {n:"Beseitigung",a:"die",s:"A",k:7},
+  {n:"Checkliste",a:"die",s:"A",k:7},
+  {n:"Design",a:"das",s:"A",k:7},
+  {n:"Haltbarkeit",a:"die",s:"A",k:7},
+  {n:"Image",a:"das",s:"A",k:7},
+  {n:"Kundenbewertung",a:"die",s:"A",k:7},
+  {n:"Mangel",a:"der",s:"A",k:7},
+  {n:"Nachhaltigkeit",a:"die",s:"A",k:7},
+  {n:"Preis-Leistungs-Verhältnis",a:"das",s:"A",k:7},
+  {n:"Qualitätsmanagement",a:"das",s:"A",k:7},
+  {n:"Qualitätsmerkmal",a:"das",s:"A",k:7},
+  {n:"Qualitätssicherung",a:"die",s:"A",k:7},
+  {n:"Pauschalreise",a:"die",s:"A",k:7},
+  {n:"Regalbrett",a:"das",s:"A",k:7},
+  {n:"Sägemaschine",a:"die",s:"A",k:7},
+  {n:"Umweltfreundlichkeit",a:"die",s:"A",k:7},
+  {n:"Zusammenbau",a:"der",s:"A",k:7},
+  {n:"Zuverlässigkeit",a:"die",s:"A",k:7},
+  {n:"Arbeitsfläche",a:"die",s:"B",k:7},
+  {n:"Bakterie",a:"die",s:"B",k:7},
+  {n:"Desinfektionsmittel",a:"das",s:"B",k:7},
+  {n:"Dienstkleidung",a:"die",s:"B",k:7},
+  {n:"Einmalhandschuh",a:"der",s:"B",k:7},
+  {n:"Fieberthermometer",a:"das",s:"B",k:7},
+  {n:"Fingernagel",a:"der",s:"B",k:7},
+  {n:"Funktionsraum",a:"der",s:"B",k:7},
+  {n:"Hygiene",a:"die",s:"B",k:7},
+  {n:"Hygieneplan",a:"der",s:"B",k:7},
+  {n:"Infektion",a:"die",s:"B",k:7},
+  {n:"Krankheitserreger",a:"der",s:"B",k:7},
+  {n:"Pandemie",a:"die",s:"B",k:7},
+  {n:"Pflegebereich",a:"der",s:"B",k:7},
+  {n:"Pflegekraft",a:"die",s:"B",k:7},
+  {n:"Qualitätssicherung",a:"die",s:"B",k:7},
+  {n:"Sanitäreinrichtung",a:"die",s:"B",k:7},
+  {n:"Stuhl",a:"der",s:"B",k:7},
+  {n:"Übertragung",a:"die",s:"B",k:7},
+  {n:"Urin",a:"der",s:"B",k:7},
+  {n:"Verbreitung",a:"die",s:"B",k:7},
+  {n:"Virus",a:"das",s:"B",k:7},
+  {n:"Zwischenraum",a:"der",s:"B",k:7},
+  {n:"Arbeitsklima",a:"das",s:"C",k:7},
+  {n:"Atmosphäre",a:"die",s:"C",k:7},
+  {n:"Feedback",a:"das",s:"C",k:7},
+  {n:"Führungskraft",a:"die",s:"C",k:7},
+  {n:"Kooperationsfähigkeit",a:"die",s:"C",k:7},
+  {n:"Kundenorientierung",a:"die",s:"C",k:7},
+  {n:"Rückmeldung",a:"die",s:"C",k:7},
+  {n:"Verhalten",a:"das",s:"C",k:7},
+  {n:"Zielvereinbarungsgespräch",a:"das",s:"C",k:7},
+  {n:"Altenpflege",a:"die",s:"D",k:7},
+  {n:"Arbeitsbelastung",a:"die",s:"D",k:7},
+  {n:"Betriebsvereinbarung",a:"die",s:"D",k:7},
+  {n:"Einschätzung",a:"die",s:"D",k:7},
+  {n:"Entlastung",a:"die",s:"D",k:7},
+  {n:"Fachkraft",a:"die",s:"D",k:7},
+  {n:"Gesundheitsschutz",a:"der",s:"D",k:7},
+  {n:"Heimleiter",a:"der",s:"D",k:7},
+  {n:"Heimleiterin",a:"die",s:"D",k:7},
+  {n:"Leistungsgrenze",a:"die",s:"D",k:7},
+  {n:"Mehrarbeit",a:"die",s:"D",k:7},
+  {n:"Personalmangel",a:"der",s:"D",k:7},
+  {n:"Tadel",a:"der",s:"D",k:7},
+  {n:"Beziehung",a:"die",s:"E",k:7},
+  {n:"Ich-Botschaft",a:"die",s:"E",k:7},
+  {n:"Tabu",a:"das",s:"E",k:7}
+];
+
+const GAP_ITEMS = [
+  {before:"sich", answer:"anpassen", after:"an neue Aufgaben (+Akk.)", hint:"A: Verb zu 'sich an___ an'", k:1},
+  {before:"", answer:"aufgrund", after:"von Personalmangel (+Dat.)", hint:"A: Präposition mit Dativ", k:1},
+  {before:"sich", answer:"behaupten", after:"in der Arbeitswelt", hint:"A: in einer schwierigen Situation erfolgreich bleiben", k:1},
+  {before:"sich", answer:"einstellen", after:"auf neue Herausforderungen (+Akk.)", hint:"A: sich vorbereiten auf", k:1},
+  {before:"neue Kenntnisse", answer:"erwerben", after:"", hint:"A/B: sich etwas aneignen", k:1},
+  {before:"sich", answer:"niederlassen", after:"als Freiberufler", hint:"A: einen Wohnsitz/Betrieb gründen", k:1},
+  {before:"", answer:"vertrauen", after:"auf die eigene Zukunft (+Akk.)", hint:"A: sich auf etwas verlassen", k:1},
+  {before:"", answer:"geeignet", after:"für die Stelle (+Akk.)", hint:"B: gut passend für", k:1},
+  {before:"zur Verfügung", answer:"stehen", after:"", hint:"B: verfügbar sein", k:1},
+  {before:"Wissen an die Kollegen", answer:"vermitteln", after:"", hint:"B: etwas weitergeben, erklären", k:1},
+  {before:"sich für eine Aufgabe", answer:"qualifizieren", after:"", hint:"B: sich geeignet machen", k:1},
+  {before:"ein neues System", answer:"einführen", after:"", hint:"C: etwas neu starten/etablieren", k:1},
+  {before:"eine neue Filiale", answer:"eröffnen", after:"", hint:"C: den Start von etwas feiern", k:1},
+  {before:"das Angebot", answer:"erweitern", after:"", hint:"C: größer/vielfältiger machen", k:1},
+  {before:"das neue Produkt den Kunden", answer:"präsentieren", after:"", hint:"C: etwas vor anderen vorstellen", k:1},
+  {before:"die Verantwortung für das Projekt", answer:"übernehmen", after:"", hint:"C: eine Aufgabe oder Verantwortung annehmen", k:1},
+  {before:"eine neue Regelung", answer:"anordnen", after:"", hint:"D: eine Anweisung geben, etwas festlegen", k:1},
+  {before:"die Abteilung erfolgreich", answer:"leiten", after:"", hint:"D: die Verantwortung für etwas tragen, etwas führen", k:1},
+  {before:"die Aufgaben den Mitarbeitern", answer:"zuordnen", after:"(+ Dat.)", hint:"D: etwas einer bestimmten Person zuweisen", k:1},
+  {before:"sich mit den Kollegen", answer:"duzen", after:"", hint:"E: sich gegenseitig mit 'du' ansprechen", k:1},
+  {before:"die Meinung anderer", answer:"respektieren", after:"", hint:"E: etwas oder jemanden achten, anerkennen", k:1},
+  {before:"sich im Berufsleben meistens", answer:"siezen", after:"", hint:"E: sich gegenseitig mit 'Sie' ansprechen", k:1},
+  {before:"den Kundenservice", answer:"kontaktieren", after:"", hint:"A: sich mit jemandem in Verbindung setzen", k:6},
+  {before:"das Fahrzeug neu", answer:"lackieren", after:"", hint:"A: mit Farbe/Lack bestreichen", k:6},
+  {before:"über den Preis", answer:"verhandeln", after:"", hint:"A: über die Bedingungen diskutieren, um sich zu einigen", k:6},
+  {before:"einen Kontakt", answer:"vermitteln", after:"", hint:"A: zwischen zwei Parteien einen Kontakt herstellen", k:6},
+  {before:"den Wert einer Sache", answer:"schätzen", after:"", hint:"A: den Wert von etwas als hoch einschätzen", k:6},
+  {before:"eine neue Maschine", answer:"anschaffen", after:"", hint:"B: etwas Größeres neu kaufen", k:6},
+  {before:"ein unerwartetes Problem kann plötzlich", answer:"auftauchen", after:"", hint:"B: plötzlich sichtbar werden, entstehen", k:6},
+  {before:"die Reifen im Winter", answer:"lagern", after:"", hint:"B: etwas an einem Ort aufbewahren", k:6},
+  {before:"einen Fehler schnell", answer:"beheben", after:"", hint:"C: einen Fehler oder ein Problem lösen", k:6},
+  {before:"die Kaffeemaschine regelmäßig", answer:"entkalken", after:"", hint:"C: Kalkablagerungen aus einem Gerät entfernen", k:6},
+  {before:"das Wasser auf 90 Grad", answer:"erhitzen", after:"", hint:"C: etwas heiß machen", k:6},
+  {before:"ein Update", answer:"herunterladen", after:"", hint:"C: Daten aus dem Internet auf ein Gerät übertragen", k:6},
+  {before:"Reinigungstabletten", answer:"nachfüllen", after:"", hint:"C: etwas wieder auffüllen, wenn es leer wird", k:6},
+  {before:"das Display vorsichtig", answer:"reinigen", after:"", hint:"C: etwas sauber machen", k:6},
+  {before:"die Elektronik nicht mit Wasser", answer:"säubern", after:"", hint:"C: etwas von Schmutz befreien", k:6},
+  {before:"das Gerät neu", answer:"starten", after:"", hint:"C: etwas in Betrieb setzen", k:6},
+  {before:"das beschädigte Teil", answer:"abmontieren", after:"", hint:"D: ein Teil von etwas entfernen, ausbauen", k:6},
+  {before:"das Fahrzeug mit dem Wagenheber", answer:"anheben", after:"", hint:"D: etwas nach oben bewegen", k:6},
+  {before:"neue Bremsflüssigkeit", answer:"einfüllen", after:"", hint:"D: eine Flüssigkeit in etwas hineingeben", k:6},
+  {before:"die Sommerreifen für den Winter", answer:"einlagern", after:"", hint:"D: etwas für eine gewisse Zeit aufbewahren", k:6},
+  {before:"die festsitzende Schraube", answer:"lösen", after:"", hint:"D: etwas locker machen", k:6},
+  {before:"das Ersatzteil an der richtigen Stelle", answer:"platzieren", after:"", hint:"D: etwas an eine bestimmte Stelle stellen", k:6},
+  {before:"den Ausbau des Radwegenetzes", answer:"befürworten", after:"", hint:"E: für etwas sein, etwas unterstützen", k:6},
+  {before:"die Innenstadt für den Autoverkehr", answer:"sperren", after:"", hint:"E: den Zugang zu etwas verhindern", k:6},
+  {before:"das Stromnetz nicht", answer:"überlasten", after:"", hint:"E: etwas mit mehr belasten, als es aushält", k:6},
+  {before:"auf das eigene Auto", answer:"verzichten", after:"", hint:"E: bewusst auf etwas nicht bestehen (+ auf Akk.)", k:6},
+  {before:"eine Maschine richtig", answer:"bedienen", after:"", hint:"A: etwas/jemanden richtig benutzen bzw. versorgen", k:7},
+  {before:"ein Geschäft erfolgreich", answer:"betreiben", after:"", hint:"A: etwas führen, ausüben", k:7},
+  {before:"die Lautstärke neu", answer:"einstellen", after:"", hint:"A: etwas auf einen bestimmten Wert bringen", k:7},
+  {before:"unnötige Fehler", answer:"vermeiden", after:"", hint:"A: dafür sorgen, dass etwas nicht passiert", k:7},
+  {before:"die Einzelteile", answer:"zusammenbauen", after:"", hint:"A: einzelne Teile zu einem Ganzen verbinden", k:7},
+  {before:"eine Krankheit kann eine Infektion", answer:"auslösen", after:"", hint:"B: der Grund für etwas sein, etwas verursachen", k:7},
+  {before:"die Arbeitsfläche gründlich", answer:"desinfizieren", after:"", hint:"B: etwas keimfrei machen", k:7},
+  {before:"die Hände vor dem Waschen", answer:"einseifen", after:"", hint:"B: mit Seife einreiben", k:7},
+  {before:"eine Infektion kann Patient:innen", answer:"gefährden", after:"", hint:"B: jemanden/etwas in Gefahr bringen", k:7},
+  {before:"Bakterien können eine Arbeitsfläche", answer:"kontaminieren", after:"", hint:"B: etwas verunreinigen, mit Keimen belasten", k:7},
+  {before:"Hygieneregeln können eine Übertragung", answer:"verhindern", after:"", hint:"B: dafür sorgen, dass etwas nicht geschieht", k:7},
+  {before:"die Leistung eines Mitarbeiters", answer:"beurteilen", after:"", hint:"C: sich eine Meinung über etwas/jemanden bilden", k:7},
+  {before:"die Arbeit im Gespräch", answer:"bewerten", after:"", hint:"C: eine Einschätzung zu etwas abgeben", k:7},
+  {before:"ein gemeinsames Ziel", answer:"erreichen", after:"", hint:"C: etwas schaffen, zu einem Ergebnis kommen", k:7},
+  {before:"nach dem Gespräch offenes Feedback", answer:"geben", after:"", hint:"C: eine Rückmeldung mitteilen", k:7},
+  {before:"im Gespräch offene Fragen", answer:"stellen", after:"", hint:"C: um Informationen bitten", k:7},
+  {before:"konstruktive Kritik", answer:"üben", after:"", hint:"C: eine kritische Rückmeldung geben", k:7},
+  {before:"während der Sitzung Protokoll", answer:"führen", after:"", hint:"C: schriftlich festhalten, was besprochen wurde", k:7},
+  {before:"Überstunden durch freie Tage", answer:"ausgleichen", after:"", hint:"D: einen Nachteil durch etwas anderes wettmachen", k:7},
+  {before:"neue Arbeitszeiten mit dem Chef", answer:"aushandeln", after:"", hint:"D: durch Verhandeln zu einer Einigung kommen", k:7},
+  {before:"einen Antrag auf Sonderurlaub", answer:"bewilligen", after:"", hint:"D: etwas offiziell genehmigen", k:7},
+  {before:"seine wahren Gefühle", answer:"verbergen", after:"", hint:"D: etwas absichtlich nicht zeigen", k:7},
+  {before:"unberechtigte Kritik", answer:"zurückweisen", after:"", hint:"D: etwas ablehnen, nicht akzeptieren", k:7},
+  {before:"in einem Bericht kann sich schnell ein Fehler", answer:"einschleichen", after:"", hint:"D: unbemerkt in etwas hineingeraten", k:7},
+  {before:"die Ursachen eines Konflikts", answer:"erforschen", after:"", hint:"E: etwas genau untersuchen", k:7},
+  {before:"bei so einer Ungerechtigkeit kann man leicht", answer:"rotsehen", after:"", hint:"E: vor Wut die Beherrschung verlieren", k:7},
+  {before:"sich das ständige Unterbrechen", answer:"abgewöhnen", after:"", hint:"E: eine schlechte Gewohnheit aufgeben", k:7},
+  {before:"sich um eine faire Lösung", answer:"bemühen", after:"", hint:"E: sich Mühe geben, etwas zu erreichen", k:7}
+];
+
+const MATCH_ITEMS = [
+  {w:"der Absolvent / die Absolventin", d:"Person, die eine Ausbildung oder ein Studium erfolgreich abgeschlossen hat", k:1},
+  {w:"die Arbeitsteilung", d:"die Aufteilung von Aufgaben auf verschiedene Personen", k:1},
+  {w:"die Arbeitswelt", d:"der Bereich, in dem Menschen berufstätig sind", k:1},
+  {w:"sich behaupten", d:"in einer schwierigen Situation erfolgreich bleiben", k:1},
+  {w:"die Digitalisierung", d:"die Umstellung von analogen auf digitale Prozesse", k:1},
+  {w:"der Freiberufler / die Freiberuflerin", d:"jemand, der selbstständig arbeitet, oft ohne festen Arbeitgeber", k:1},
+  {w:"die Globalisierung", d:"die weltweite Vernetzung von Wirtschaft und Gesellschaft", k:1},
+  {w:"die Herausforderung", d:"eine schwierige Aufgabe, die Mut oder Können erfordert", k:1},
+  {w:"der Klimawandel", d:"die langfristige Veränderung des Erdklimas", k:1},
+  {w:"modernisieren", d:"etwas auf den neuesten Stand bringen", k:1},
+  {w:"sich niederlassen", d:"an einem Ort seinen Wohnsitz oder Betrieb gründen", k:1},
+  {w:"veralten", d:"nicht mehr aktuell oder zeitgemäß sein", k:1},
+  {w:"vertrauen auf (+Akk.)", d:"sich auf etwas verlassen", k:1},
+  {w:"ambulant", d:"ohne Übernachtung im Krankenhaus (Gegenteil: stationär)", k:1},
+  {w:"das Beschwerdemanagement", d:"der professionelle Umgang mit Kundenbeschwerden", k:1},
+  {w:"der Bildungsgutschein", d:"ein Dokument, mit dem eine Weiterbildung (mit)finanziert wird", k:1},
+  {w:"die Fachkraft", d:"eine Person mit einer bestimmten beruflichen Qualifikation", k:1},
+  {w:"die Fördermöglichkeit", d:"eine Möglichkeit, finanzielle oder andere Unterstützung zu bekommen", k:1},
+  {w:"die Haushaltsführung", d:"die Organisation und Erledigung der Aufgaben im Haushalt", k:1},
+  {w:"die Hilfskraft", d:"eine Person, die unterstützende Tätigkeiten ohne spezielle Ausbildung übernimmt", k:1},
+  {w:"der Lehrplan", d:"ein Dokument, das die Lerninhalte eines Kurses festlegt", k:1},
+  {w:"die Pflegeeinrichtung", d:"eine Institution, in der pflegebedürftige Menschen betreut werden", k:1},
+  {w:"sich qualifizieren", d:"sich durch Ausbildung oder Fortbildung für eine Aufgabe geeignet machen", k:1},
+  {w:"die Abfallvermeidung", d:"Maßnahmen, um weniger Müll zu produzieren", k:1},
+  {w:"die Betriebsbesichtigung", d:"ein Besuch in einem Unternehmen, um es kennenzulernen", k:1},
+  {w:"das Betriebsgelände", d:"das Grundstück oder Gebäude, auf dem ein Unternehmen arbeitet", k:1},
+  {w:"die Energieeinsparung", d:"die Reduzierung des Energieverbrauchs", k:1},
+  {w:"der Entscheidungsspielraum", d:"der Freiraum, den jemand hat, um eigene Entscheidungen zu treffen", k:1},
+  {w:"die Erschließung", d:"das Zugänglichmachen von etwas, z. B. neuer Märkte", k:1},
+  {w:"die Filiale", d:"eine Zweigstelle eines Unternehmens an einem anderen Standort", k:1},
+  {w:"das Geschäftsjahr", d:"der Zeitraum, für den ein Unternehmen seine Bilanz erstellt", k:1},
+  {w:"die Hierarchie", d:"die Rangordnung von übergeordneten und untergeordneten Positionen", k:1},
+  {w:"der Pressesprecher / die Pressesprecherin", d:"die Person, die offiziell für ein Unternehmen zur Presse spricht", k:1},
+  {w:"der Rundgang", d:"ein Spaziergang durch einen Ort, um ihn kennenzulernen", k:1},
+  {w:"das Sortiment", d:"die Gesamtheit der angebotenen Produkte eines Unternehmens", k:1},
+  {w:"der Standort", d:"der Ort, an dem sich etwas befindet", k:1},
+  {w:"der Umsatz", d:"der Gesamtwert der verkauften Waren/Dienstleistungen in einem Zeitraum", k:1},
+  {w:"das Controlling", d:"die Planung, Steuerung und Kontrolle betrieblicher Abläufe und Finanzen", k:1},
+  {w:"die Finanzabteilung", d:"die Abteilung, die für die Finanzen eines Unternehmens zuständig ist", k:1},
+  {w:"die Geschäftsleitung", d:"die Personen, die ein Unternehmen leiten", k:1},
+  {w:"die Haustechnik", d:"die technische Ausstattung und Wartung eines Gebäudes", k:1},
+  {w:"die Hierarchieebene", d:"eine Stufe innerhalb einer Hierarchie", k:1},
+  {w:"das Marketing", d:"die Vermarktung von Produkten oder Dienstleistungen", k:1},
+  {w:"die Öffentlichkeitsarbeit", d:"die Kommunikation eines Unternehmens mit der Öffentlichkeit", k:1},
+  {w:"das Organigramm", d:"eine grafische Darstellung der Organisationsstruktur eines Unternehmens", k:1},
+  {w:"die Qualitätssicherung", d:"Maßnahmen, um eine gleichbleibend hohe Qualität zu gewährleisten", k:1},
+  {w:"der Vertrieb", d:"die Abteilung, die für den Verkauf von Produkten zuständig ist", k:1},
+  {w:"die Anrede", d:"die Art, wie man jemanden anspricht", k:1},
+  {w:"sich duzen", d:"sich gegenseitig mit 'du' ansprechen", k:1},
+  {w:"der Kompromiss", d:"eine Einigung, bei der beide Seiten nachgeben", k:1},
+  {w:"etw./jdn. respektieren", d:"etwas oder jemanden achten, anerkennen", k:1},
+  {w:"sich siezen", d:"sich gegenseitig mit 'Sie' ansprechen", k:1},
+  {w:"jdm. das Du anbieten", d:"jemandem vorschlagen, sich zu duzen", k:1},
+  {w:"die Anweisung", d:"eine Anordnung oder Vorgabe, wie etwas zu tun ist", k:6},
+  {w:"das Ersatzfahrzeug", d:"ein Fahrzeug, das man vorübergehend anstelle des eigenen nutzt (z. B. während einer Reparatur)", k:6},
+  {w:"die Gehaltsabrechnung", d:"das Dokument, das den Lohn und die Abzüge eines Monats zeigt", k:6},
+  {w:"die Inspektion", d:"die regelmäßige technische Überprüfung eines Fahrzeugs", k:6},
+  {w:"der Liefertermin", d:"der vereinbarte Zeitpunkt, an dem etwas geliefert wird", k:6},
+  {w:"die Lieferverzögerung", d:"eine Verspätung bei der Lieferung", k:6},
+  {w:"preisgünstig", d:"nicht teuer, zu einem günstigen Preis", k:6},
+  {w:"der Reparaturauftrag", d:"der Auftrag, etwas zu reparieren", k:6},
+  {w:"verhandeln", d:"über die Bedingungen von etwas diskutieren, um sich zu einigen", k:6},
+  {w:"der Wagenpark", d:"alle Fahrzeuge, die einem Unternehmen gehören", k:6},
+  {w:"auftauchen", d:"plötzlich sichtbar werden, entstehen", k:6},
+  {w:"die (technischen) Daten", d:"Zahlen und Angaben, die etwas genau beschreiben", k:6},
+  {w:"das Eigengewicht", d:"das Gewicht eines leeren Fahrzeugs/Geräts ohne Zuladung", k:6},
+  {w:"erforderlich", d:"notwendig, benötigt", k:6},
+  {w:"die Gewährleistung", d:"die gesetzliche Garantie für die Qualität einer Ware", k:6},
+  {w:"die Hebebühne", d:"eine technische Vorrichtung, um Fahrzeuge zur Reparatur anzuheben", k:6},
+  {w:"die Hubhöhe", d:"die maximale Höhe, auf die etwas angehoben werden kann", k:6},
+  {w:"die Kaufentscheidung", d:"die Entscheidung, ob und was man kauft", k:6},
+  {w:"die Neuanschaffung", d:"ein neu gekauftes Gerät oder Fahrzeug", k:6},
+  {w:"die Tragfähigkeit", d:"die maximale Last, die etwas tragen kann", k:6},
+  {w:"das Bedienungsproblem", d:"eine Schwierigkeit bei der Nutzung eines Geräts", k:6},
+  {w:"der Defekt", d:"ein technischer Fehler, eine Störung", k:6},
+  {w:"etw. entkalken", d:"Kalkablagerungen aus einem Gerät entfernen", k:6},
+  {w:"der Kaffeesatzbehälter", d:"der Behälter, in dem der benutzte Kaffeesatz landet", k:6},
+  {w:"die Mechanik", d:"die mechanischen (beweglichen) Teile eines Geräts", k:6},
+  {w:"etw. nachfüllen", d:"etwas wieder auffüllen, wenn es leer wird", k:6},
+  {w:"die Programmierung", d:"das Erstellen oder Einstellen eines Programms/Ablaufs", k:6},
+  {w:"die Reinigungstablette", d:"eine Tablette, die zum Reinigen eines Geräts verwendet wird", k:6},
+  {w:"der Stillstand", d:"der Zustand, in dem etwas nicht arbeitet/funktioniert", k:6},
+  {w:"die Störung", d:"eine Unterbrechung des normalen Betriebs", k:6},
+  {w:"der (Drehmoment-)Schlüssel", d:"ein Werkzeug zum Festziehen von Schrauben mit einer bestimmten Kraft", k:6},
+  {w:"der Aktionstag", d:"ein Tag mit einem besonderen Angebot oder einer besonderen Aktion", k:6},
+  {w:"die Autobatterie", d:"die Batterie, die den Strom für ein Auto liefert", k:6},
+  {w:"die Bremsflüssigkeit", d:"die Flüssigkeit, die im Bremssystem eines Fahrzeugs verwendet wird", k:6},
+  {w:"die Drahtbürste", d:"eine Bürste mit Borsten aus Metall zum Entfernen von Rost o. Ä.", k:6},
+  {w:"das Frostschutzmittel", d:"ein Mittel, das eine Flüssigkeit vor dem Gefrieren schützt", k:6},
+  {w:"der Kratzer", d:"eine kleine Beschädigung der Oberfläche, z. B. am Lack", k:6},
+  {w:"die Probefahrt", d:"eine kurze Fahrt, um ein Fahrzeug zu testen", k:6},
+  {w:"der Reifenwechsel", d:"das Austauschen der Reifen an einem Fahrzeug", k:6},
+  {w:"der Wagenheber", d:"ein Werkzeug, mit dem man ein Fahrzeug anhebt, z. B. zum Reifenwechsel", k:6},
+  {w:"die Abgase", d:"die Gase, die z. B. ein Motor beim Verbrennen von Kraftstoff ausstößt", k:6},
+  {w:"das Carsharing", d:"das gemeinsame Nutzen von Autos durch mehrere Personen, meist gegen Gebühr", k:6},
+  {w:"das Elektroauto", d:"ein Auto, das mit elektrischem Strom statt mit Verbrennungsmotor fährt", k:6},
+  {w:"der Individualverkehr", d:"der Verkehr mit privaten Fahrzeugen (im Gegensatz zum öffentlichen Verkehr)", k:6},
+  {w:"der Klimawandel", d:"die langfristige Veränderung des Erdklimas", k:6},
+  {w:"die Lärmbelästigung", d:"eine störende Beeinträchtigung durch Lärm", k:6},
+  {w:"die Luftverschmutzung", d:"die Verunreinigung der Luft durch Schadstoffe", k:6},
+  {w:"das Park-and-Ride-System", d:"ein System, bei dem man mit dem Auto zu einem Parkplatz fährt und von dort mit öffentlichen Verkehrsmitteln weiterfährt", k:6},
+  {w:"etw. überlasten", d:"etwas mit mehr belasten, als es aushält", k:6},
+  {w:"der Verbrennungsmotor", d:"ein Motor, der Kraftstoff durch Verbrennung in Energie umwandelt", k:6},
+  {w:"die Bedienbarkeit", d:"wie einfach oder schwierig sich etwas bedienen lässt", k:7},
+  {w:"die Checkliste", d:"eine Liste zum Abhaken einzelner Punkte", k:7},
+  {w:"haltbar", d:"so beschaffen, dass es lange verwendbar bleibt", k:7},
+  {w:"die Kundenbewertung", d:"eine Einschätzung eines Produkts/einer Leistung durch Kund:innen", k:7},
+  {w:"der Mangel", d:"ein Fehler oder ein Defekt an etwas", k:7},
+  {w:"die Nachhaltigkeit", d:"ein Handeln, das Ressourcen schont und die Zukunft berücksichtigt", k:7},
+  {w:"das Preis-Leistungs-Verhältnis", d:"wie gut der Preis im Vergleich zur gebotenen Leistung ist", k:7},
+  {w:"die Pauschalreise", d:"eine Reise, bei der Fahrt, Unterkunft usw. als Gesamtpaket gebucht werden", k:7},
+  {w:"wettbewerbsfähig", d:"im Vergleich mit anderen gut bestehen könnend", k:7},
+  {w:"die Zuverlässigkeit", d:"die Eigenschaft, dass man sich auf etwas/jemanden verlassen kann", k:7},
+  {w:"die Arbeitsfläche", d:"die Fläche, auf der gearbeitet wird (z. B. in Küche oder Pflege)", k:7},
+  {w:"die Bakterie", d:"ein sehr kleiner Krankheitserreger", k:7},
+  {w:"das Desinfektionsmittel", d:"ein Mittel, das Keime abtötet", k:7},
+  {w:"der Einmalhandschuh", d:"ein Handschuh, der nur einmal benutzt und dann weggeworfen wird", k:7},
+  {w:"das Fieberthermometer", d:"ein Gerät zum Messen der Körpertemperatur", k:7},
+  {w:"der Funktionsraum", d:"ein Raum mit einer bestimmten Aufgabe (z. B. Lager, Bad) in einer Einrichtung", k:7},
+  {w:"der Hygieneplan", d:"ein Dokument mit den Hygieneregeln einer Einrichtung", k:7},
+  {w:"die Infektion", d:"das Eindringen und Vermehren von Krankheitserregern im Körper", k:7},
+  {w:"der Krankheitserreger", d:"ein Mikroorganismus, der eine Krankheit auslösen kann", k:7},
+  {w:"die Pandemie", d:"eine Krankheit, die sich weltweit ausbreitet", k:7},
+  {w:"die Sanitäreinrichtung", d:"eine Einrichtung wie Toilette, Dusche oder Waschbecken", k:7},
+  {w:"das Virus", d:"ein sehr kleiner Erreger, der Infektionskrankheiten auslösen kann", k:7},
+  {w:"angespannt", d:"nervös, unter Druck stehend", k:7},
+  {w:"das Arbeitsklima", d:"die allgemeine Stimmung an einem Arbeitsplatz", k:7},
+  {w:"befreiend", d:"so, dass man sich danach erleichtert fühlt", k:7},
+  {w:"einfühlsam", d:"mit Verständnis für die Gefühle anderer", k:7},
+  {w:"das Feedback", d:"eine Rückmeldung zu einer Leistung oder einem Verhalten", k:7},
+  {w:"die Führungskraft", d:"eine Person mit Leitungsverantwortung in einem Betrieb", k:7},
+  {w:"harmonisch", d:"in gutem Einklang, ohne Streit", k:7},
+  {w:"hitzig", d:"schnell aufbrausend, emotional erregt", k:7},
+  {w:"in Wut geraten", d:"sehr wütend werden", k:7},
+  {w:"die Kooperationsfähigkeit", d:"die Fähigkeit, gut mit anderen zusammenzuarbeiten", k:7},
+  {w:"die Kundenorientierung", d:"ein Verhalten, das sich an den Wünschen der Kund:innen ausrichtet", k:7},
+  {w:"die Rückmeldung", d:"eine Reaktion oder Antwort auf etwas", k:7},
+  {w:"vertraulich", d:"geheim, nicht für andere bestimmt", k:7},
+  {w:"das Zielvereinbarungsgespräch", d:"ein Gespräch, in dem gemeinsame Ziele festgelegt werden", k:7},
+  {w:"die (stationäre) Altenpflege", d:"die Pflege älterer Menschen in einer Einrichtung, in der sie auch wohnen", k:7},
+  {w:"die Arbeitsbelastung", d:"das Ausmaß an Anstrengung, das eine Arbeit mit sich bringt", k:7},
+  {w:"die Betriebsvereinbarung", d:"eine schriftliche Vereinbarung zwischen Betrieb und Belegschaft", k:7},
+  {w:"destruktiv", d:"zerstörerisch, nicht konstruktiv", k:7},
+  {w:"die Einschätzung", d:"eine persönliche Meinung oder Bewertung", k:7},
+  {w:"jdm. sind die Hände gebunden", d:"jemand kann nicht handeln, wie er/sie möchte", k:7},
+  {w:"gehetzt", d:"unter Zeitdruck, in Eile", k:7},
+  {w:"der Heimleiter / die Heimleiterin", d:"die Person, die ein Heim (z. B. Pflegeheim) leitet", k:7},
+  {w:"machtlos", d:"ohne die Möglichkeit, etwas zu verändern", k:7},
+  {w:"der Personalmangel", d:"zu wenig Mitarbeiter:innen für die anfallende Arbeit", k:7},
+  {w:"der Tadel", d:"ein Vorwurf wegen eines Fehlverhaltens", k:7},
+  {w:"die Beziehung", d:"die Verbindung zwischen zwei oder mehr Personen", k:7},
+  {w:"die Ich-Botschaft", d:"eine Aussage, die die eigenen Gefühle statt Vorwürfe ausdrückt", k:7},
+  {w:"nachgiebig", d:"schnell bereit, den eigenen Standpunkt aufzugeben", k:7},
+  {w:"sanft", d:"freundlich und behutsam, nicht hart", k:7},
+  {w:"das Tabu", d:"ein Thema, über das man nicht offen spricht", k:7},
+  {w:"verständnisvoll", d:"mit Verständnis für die Situation anderer", k:7}
+];
+
+const SECTION_LABELS_BY_CHAPTER = {
+  1: {A:"A · Berufliche Einstiege", B:"B · Bei der Berufsberatung", C:"C · Eine Unternehmensbesichtigung", D:"D · Die Organisation eines Unternehmens", E:"E · Du oder Sie?", ALL:"Alle Wörter (A–E)"},
+  6: {A:"A · Im Kundenservice", B:"B · Betriebliche Neuanschaffungen", C:"C · Die Bedienung eines Geräts", D:"D · In der Werkstatt", E:"E · Die Mobilität der Zukunft", ALL:"Alle Wörter (A–E)"},
+  7: {A:"A · Probleme identifizieren und lösen", B:"B · Hygienemanagement in der Pflege", C:"C · Mitarbeitergespräche", D:"D · Konstruktiv Kritik üben", E:"E · Konflikte und Streit im Alltag", ALL:"Alle Wörter (A–E)"}
+};
+
+const FORM_CONFIG = {
+  1: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeDyt7pzNyEnco9HFYPPyEoPslFSIlcLbCcAPC9M0_YTWut0A/formResponse", entryName:"entry.1807476855", entryMinutes:"entry.283075760"},
+  6: {url:"https://docs.google.com/forms/d/e/1FAIpQLScQIXQjKGR5KFQzQ3ykzoRrRovVXrBxX5jhOSXdCaCGZUagNQ/formResponse", entryName:"entry.1187774539", entryMinutes:"entry.1721866399"},
+  7: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeACRhibWemnKHlCaiii0zT7RQYbHTDOcrIMoRaQrcJKEa3Rw/formResponse", entryName:"entry.714232362", entryMinutes:"entry.2064796158"}
+};
+
+/* Zuordnung der Sprachauswahl (Startbildschirm) zu ISO-639-1-Codes für die
+   automatische Übersetzungsprüfung. Sprachen ohne Eintrag (z. B. "Andere")
+   werden bei der Prüfung übersprungen. Manche Zuordnungen sind Näherungen
+   (z. B. Dari → Farsi/Persisch), da der genutzte freie Übersetzungsdienst
+   nicht jeden Dialekt einzeln unterstützt. */
+const LANG_CODES = {
+  "Arabisch":"ar", "Bulgarisch":"bg", "Dari":"fa", "Englisch":"en",
+  "Farsi / Persisch":"fa", "Französisch":"fr", "Griechisch":"el",
+  "Italienisch":"it", "Kurdisch":"ku", "Polnisch":"pl", "Portugiesisch":"pt",
+  "Rumänisch":"ro", "Russisch":"ru", "Serbisch/Kroatisch/Bosnisch":"sr",
+  "Spanisch":"es", "Thailändisch":"th", "Türkisch":"tr", "Ukrainisch":"uk",
+  "Urdu":"ur", "Vietnamesisch":"vi"
+};
+
+/* ---------------- CHAPTER META ----------------
+   Kurze Beschreibung pro Kapitel für die Kapitel-Auswahl. Neue Kapitel werden
+   hier einfach ergänzt, sobald sie gebaut sind (VOCAB/CLUES/... oben erweitern
+   und hier einen Eintrag + in RELEASED_CHAPTERS aufnehmen). */
+const CHAPTER_META = {
+  1: {title:"Berufseinstieg & Unternehmen", themes:"Berufliche Einstiege · Berufsberatung · Unternehmensbesichtigung · Organisation eines Unternehmens · Du oder Sie?"},
+  6: {title:"Kundenservice & Technik", themes:"Im Kundenservice · Betriebliche Neuanschaffungen · Bedienung eines Geräts · In der Werkstatt · Mobilität der Zukunft"},
+  7: {title:"Qualität & Miteinander", themes:"Probleme identifizieren und lösen · Hygienemanagement in der Pflege · Mitarbeitergespräche · Konstruktiv Kritik üben · Konflikte und Streit im Alltag"}
+};
+/* Welches Kapitel ist gerade "aktuell" (wird auf der Kapitel-Auswahl oben und
+   hervorgehoben angezeigt)? Einfach die Zahl ändern und die Datei neu
+   hochladen, wenn der Kurs weiter ist. */
+const CURRENT_CHAPTER = 7;
+/* Alle bereits gebauten Kapitel, aufsteigend. Neue Kapitel-Nummer hier
+   ergänzen, sobald ihr Wortschatz oben in VOCAB usw. eingefügt wurde. */
+const RELEASED_CHAPTERS = [1, 6, 7];
+
+function shortTerm(t){
+  let s = t.split(",")[0];
+  s = s.replace(/\s*\(Sg\.\)/g, "");
+  s = s.replace(/\s*\(z\. ?B\.[^)]*\)/g, "");
+  return s.trim();
+}
+function poolIndices(chapter, sec){
+  return VOCAB.map((v,i)=>i).filter(i => VOCAB[i].k===chapter && (sec==="ALL" ? true : VOCAB[i].s===sec));
+}
+function bysection(list, chapter, sec){
+  return list.filter(x => x.k===chapter && (sec==="ALL" ? true : x.s===sec));
+}
+
+/* ---------------- STATE ---------------- */
+let state = {
+  name:"", lang:"Deutsch", langCode:null, rawLang:"", otherLang:"",
+  chapter:null,
+  translations:{},
+  fcQueue:[], fcIndex:0, fcSection:"ALL", fcCurrentIdx:null, fcScore:0, fcSeen:0, fcAttempts:0, fcLocked:false,
+  artQueue:[], artIndex:0, artScore:0, artAttempts:0, artLocked:false,
+  gapQueue:[], gapIndex:0, gapScore:0, gapAttempts:0, gapLocked:false,
+  matchPairs:[], matchSelectedWord:null, matchSolved:0,
+  resultReturnTo:"menu", resultRetryFn:null
+};
+
+/* ---------------- LOKALE SPEICHERUNG (Browser-Speicher auf diesem Gerät) ----------------
+   Speichert Name, Sprache und die eigenen Übersetzungen im localStorage dieses
+   Geräts, damit Schüler:innen beim erneuten Öffnen nicht wieder bei Null anfangen.
+   Es verlässt nie dieses Gerät (kein Server-Zugriff, keine Übertragung). Ergebnisse
+   werden pro Kapitel gespeichert (savedScores[Kapitel][Modus]). */
+const STORAGE_KEY = "wortschatz_bskb2_gesamt_v1";
+function loadSavedData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      name: state.name,
+      rawLang: state.rawLang || "",
+      otherLang: state.otherLang || "",
+      translations: state.translations,
+      scores: state.savedScores || {}
+    }));
+  }catch(e){ /* z. B. privater Modus oder Speicher voll – Übung läuft trotzdem normal weiter */ }
+}
+let saveTimer = null;
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 500);
+}
+const SAVED = loadSavedData();
+if(SAVED && SAVED.translations) state.translations = SAVED.translations;
+state.savedScores = (SAVED && SAVED.scores) || {};
+function saveScore(mode, score, total){
+  if(!state.savedScores[state.chapter]) state.savedScores[state.chapter] = {};
+  state.savedScores[state.chapter][mode] = {score, total};
+  saveData();
+  renderScoreBadges();
+}
+const SCORE_BADGE_LABELS = {fc:"scoreBadge-fc", art:"scoreBadge-art", gap:"scoreBadge-gap"};
+function renderScoreBadges(){
+  const chapterScores = state.savedScores[state.chapter] || {};
+  Object.keys(SCORE_BADGE_LABELS).forEach(mode=>{
+    const el = document.getElementById(SCORE_BADGE_LABELS[mode]);
+    if(!el) return;
+    const s = chapterScores[mode];
+    if(s){
+      el.textContent = "Letztes Ergebnis: " + s.score + " / " + s.total;
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  });
+}
+
+/* Small, hedged article hints based on common German suffix patterns.
+   These are learning aids ("meistens"/"oft"), not absolute rules. */
+function articleHint(noun){
+  const n = noun.toLowerCase();
+  const suffixRules = [
+    ["ung","Wörter auf -ung sind fast immer feminin → die"],
+    ["heit","Wörter auf -heit sind feminin → die"],
+    ["keit","Wörter auf -keit sind feminin → die"],
+    ["schaft","Wörter auf -schaft sind feminin → die"],
+    ["tion","Wörter auf -tion sind feminin → die"],
+    ["sion","Wörter auf -sion sind feminin → die"],
+    ["enz","Wörter auf -enz sind feminin → die"],
+    ["anz","Wörter auf -anz sind feminin → die"],
+    ["in","weibliche Personenbezeichnungen auf -in sind feminin → die"],
+    ["chen","Verkleinerungsformen auf -chen sind neutral → das"],
+    ["lein","Verkleinerungsformen auf -lein sind neutral → das"],
+    ["ment","Wörter auf -ment sind meist neutral → das"],
+    ["um","Wörter auf -um sind oft neutral → das"],
+    ["ie","Wörter auf -ie sind feminin → die"],
+    ["ling","Wörter auf -ling sind maskulin → der"]
+  ];
+  for(const [suf, hint] of suffixRules){
+    if(n.endsWith(suf)) return hint;
+  }
+  if(n.endsWith("er")) return "Personenbezeichnungen auf -er sind meist maskulin → der";
+  if(n.endsWith("en")) return "Manche Nomen auf -en (aus Verben gebildet) sind neutral → das (z. B. das Leben)";
+  return "Lerntipp: Bei zusammengesetzten Wörtern bestimmt meist der letzte Wortteil den Artikel (z. B. der Dienst, die Kraft, das Zertifikat).";
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ---------------- SCREEN NAV ---------------- */
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-back]").forEach(b=>{
+  b.addEventListener("click", ()=> showScreen(b.getAttribute("data-back")));
+});
+
+/* ---------------- START ---------------- */
+document.getElementById("selLang").addEventListener("change", (e)=>{
+  document.getElementById("otherLangWrap").style.display = e.target.value==="Andere" ? "block" : "none";
+});
+
+/* Gespeicherte Angaben (Name/Sprache) vorausfüllen, damit man sie nicht bei
+   jedem Besuch neu eingeben muss. */
+(function prefillFromStorage(){
+  if(!SAVED) return;
+  if(SAVED.name) document.getElementById("inpName").value = SAVED.name;
+  const sel = document.getElementById("selLang");
+  if(SAVED.rawLang && [...sel.options].some(o=>o.value===SAVED.rawLang)){
+    sel.value = SAVED.rawLang;
+    if(SAVED.rawLang === "Andere"){
+      document.getElementById("otherLangWrap").style.display = "block";
+      document.getElementById("inpOtherLang").value = SAVED.otherLang || "";
+    }
+  }
+  if(SAVED.name || SAVED.rawLang){
+    const wb = document.getElementById("welcomeBack");
+    wb.textContent = "👋 Willkommen zurück" + (SAVED.name ? ", " + SAVED.name : "") + "! Deine Angaben und deine bisherigen Übersetzungen sind schon gespeichert – einfach unten weiter klicken.";
+    wb.style.display = "block";
+  }
+})();
+
+document.getElementById("btnClearData").addEventListener("click", ()=>{
+  if(confirm("Möchtest du wirklich alle auf diesem Gerät gespeicherten Daten (Name, Sprache, deine Übersetzungen, deine Ergebnisse) löschen?")){
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    location.reload();
+  }
+});
+
+document.getElementById("inpName").addEventListener("input", ()=>{
+  const inp = document.getElementById("inpName");
+  if(inp.value.trim()){
+    inp.classList.remove("input-error");
+    document.getElementById("nameError").style.display = "none";
+  }
+});
+document.getElementById("btnStart").addEventListener("click", ()=>{
+  const nameInput = document.getElementById("inpName");
+  const name = nameInput.value.trim();
+  if(!name){
+    nameInput.classList.add("input-error","shake");
+    document.getElementById("nameError").style.display = "block";
+    nameInput.focus();
+    setTimeout(()=>nameInput.classList.remove("shake"), 400);
+    return;
+  }
+  const rawLang = document.getElementById("selLang").value;
+  let lang = rawLang;
+  let otherLang = "";
+  if(lang==="Andere"){
+    otherLang = document.getElementById("inpOtherLang").value.trim();
+    lang = otherLang || "meiner Sprache";
+  }
+  if(!lang){ lang = "meiner Sprache"; }
+  state.name = name; state.lang = lang;
+  state.langCode = LANG_CODES[rawLang] || null;
+  state.rawLang = rawLang;
+  state.otherLang = otherLang;
+  document.getElementById("greetName").textContent = name ? ", " + name : "";
+  document.getElementById("greetLang").textContent = lang;
+  document.getElementById("chGreetName").textContent = name ? ", " + name : "";
+  document.getElementById("fcTranslateLabel").textContent = "Wie sagt man das auf Deutsch → " + lang + "?";
+  saveData();
+  renderChapterPicker();
+  showScreen("chapters");
+});
+
+/* ---------------- KAPITEL-AUSWAHL ---------------- */
+function renderChapterPicker(){
+  const curWrap = document.getElementById("currentChapterWrap");
+  const pastWrap = document.getElementById("pastChaptersWrap");
+  curWrap.innerHTML = ""; pastWrap.innerHTML = "";
+
+  const curLabel = document.createElement("p");
+  curLabel.className = "section-label-small";
+  curLabel.textContent = "Aktuelles Kapitel";
+  curWrap.appendChild(curLabel);
+  curWrap.appendChild(buildChapterCard(CURRENT_CHAPTER, true));
+
+  const others = RELEASED_CHAPTERS.filter(k => k !== CURRENT_CHAPTER).sort((a,b)=>a-b);
+  if(others.length){
+    const pastLabel = document.createElement("p");
+    pastLabel.className = "section-label-small";
+    pastLabel.textContent = "Frühere Kapitel · zur Wiederholung";
+    pastWrap.appendChild(pastLabel);
+    others.forEach(k => pastWrap.appendChild(buildChapterCard(k, false)));
+  }
+}
+function buildChapterCard(k, isCurrent){
+  const meta = CHAPTER_META[k] || {title:"", themes:""};
+  const wordCount = VOCAB.filter(v=>v.k===k).length;
+  const card = document.createElement("div");
+  card.className = "chapter-card" + (isCurrent ? " current" : "");
+  card.innerHTML =
+    '<div class="chaphead"><span class="chapnum">' + k + '</span>' +
+    '<span class="chaptitle">Kapitel ' + k + ' · ' + meta.title + '</span></div>' +
+    '<p class="chapthemes">' + meta.themes + '</p>' +
+    '<p class="chapmeta">' + wordCount + ' Wörter' + (isCurrent ? "" : " · Wiederholung") + '</p>';
+  card.addEventListener("click", ()=> selectChapter(k));
+  return card;
+}
+function selectChapter(k){
+  if(state.chapter !== null && state.chapter !== k){
+    sendUsageBeacon(); // Zeit im vorherigen Kapitel noch verbuchen
+  }
+  state.chapter = k;
+  startUsageTracking();
+  const meta = CHAPTER_META[k] || {title:"", themes:""};
+  document.getElementById("menuChapterHint").textContent = "Kapitel " + k + " · " + meta.title + ": " + meta.themes;
+  document.getElementById("wordlistTitle").textContent = "Meine Wortliste – Kapitel " + k;
+  renderScoreBadges();
+  showScreen("menu");
+}
+document.getElementById("btnSwitchChapter").addEventListener("click", ()=>{
+  sendUsageBeacon();
+  renderChapterPicker();
+  showScreen("chapters");
+});
+
+/* ---------------- USAGE TRACKING (für die Lehrkraft) ----------------
+   Schickt beim Kapitelwechsel bzw. beim Verlassen der Seite einmalig Vorname +
+   genutzte Minuten an das zum aktuellen Kapitel gehörende Google-Formular
+   (weiterhin eines pro Kapitel, siehe FORM_CONFIG), damit die Antworten weiter
+   im passenden Tabellenblatt landen. Es werden keine weiteren Daten (Übersetzungen,
+   IP, etc.) gesendet. */
+let usageSessionStart = null;
+let usageSent = false;
+let usageChapterAtStart = null;
+function startUsageTracking(){
+  usageSessionStart = Date.now();
+  usageSent = false;
+  usageChapterAtStart = state.chapter;
+}
+function sendUsageBeacon(){
+  if(usageSent || !usageSessionStart || !usageChapterAtStart) return;
+  const cfg = FORM_CONFIG[usageChapterAtStart];
+  if(!cfg) return;
+  const minutes = Math.round(((Date.now() - usageSessionStart) / 60000) * 10) / 10;
+  if(minutes < 0.1) return;
+  usageSent = true;
+  const params = new URLSearchParams();
+  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryMinutes, String(minutes));
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(cfg.url, params);
+    } else {
+      fetch(cfg.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
+    }
+  }catch(e){ /* Übermittlung fehlgeschlagen - Übung läuft trotzdem normal weiter */ }
+}
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden) sendUsageBeacon(); });
+window.addEventListener("pagehide", sendUsageBeacon);
+
+/* ---------------- MENU -> SECTION PICKER ---------------- */
+document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    const mode = item.getAttribute("data-go");
+    if(mode === "wordlist"){ renderWordlist(); showScreen("wordlist"); return; }
+    openSectionPicker(mode);
+  });
+});
+function openSectionPicker(mode){
+  const wrap = document.getElementById("sectionButtons");
+  wrap.innerHTML = "";
+  const labels = SECTION_LABELS_BY_CHAPTER[state.chapter];
+  Object.keys(labels).forEach(sec=>{
+    const b = document.createElement("button");
+    b.className = "btn-secondary";
+    b.textContent = labels[sec];
+    b.addEventListener("click", ()=> startMode(mode, sec));
+    wrap.appendChild(b);
+  });
+  const titles = {flashcards:"Karteikarten – welche Wörter?", article:"Artikel-Quiz – welche Wörter?", gap:"Lücken füllen – welche Wörter?", match:"Zuordnen – welche Wörter?"};
+  document.getElementById("sectionPickerTitle").textContent = titles[mode] || "Wähle einen Bereich";
+  showScreen("section");
+}
+function startMode(mode, sec){
+  if(mode==="flashcards") startFlashcards(sec);
+  if(mode==="article") startArticleQuiz(sec);
+  if(mode==="gap") startGapFill(sec);
+  if(mode==="match") startMatching(sec);
+}
+
+/* ---------------- FLASHCARDS (Multiple-Choice-Erkennung) ---------------- */
+function startFlashcards(sec){
+  state.fcSection = sec;
+  state.fcQueue = shuffle(poolIndices(state.chapter, sec));
+  state.fcIndex = 0; state.fcScore = 0; state.fcSeen = 0;
+  renderFlashcard();
+  showScreen("flashcards");
+}
+function renderFlashcard(){
+  const idx = state.fcQueue[state.fcIndex];
+  state.fcCurrentIdx = idx;
+  state.fcAttempts = 0; state.fcLocked = false;
+  const item = VOCAB[idx];
+  document.getElementById("fcCounter").textContent = (state.fcIndex+1)+" / "+state.fcQueue.length;
+  document.getElementById("fcProgress").style.width = Math.round((state.fcIndex/state.fcQueue.length)*100)+"%";
+  document.getElementById("fcSection").textContent = "Abschnitt " + item.s;
+  document.getElementById("fcClue").textContent = CLUES[idx];
+  document.getElementById("fcFeedback").textContent = "";
+  document.getElementById("fcFeedback").className = "feedback";
+  document.getElementById("fcRevealBlock").style.display = "none";
+  document.getElementById("fcTranslate").value = state.translations[item.t] || "";
+  document.getElementById("fcKnownCount").textContent = state.fcScore;
+  document.getElementById("fcTotalSeen").textContent = state.fcSeen;
+
+  const distractors = shuffle(poolIndices(state.chapter, state.fcSection).filter(i => i !== idx)).slice(0,3);
+  const options = shuffle([idx, ...distractors]);
+  const wrap = document.getElementById("fcOptions");
+  wrap.innerHTML = "";
+  options.forEach(oi=>{
+    const btn = document.createElement("button");
+    btn.className = "btn-secondary";
+    btn.textContent = shortTerm(VOCAB[oi].t);
+    btn.dataset.idx = oi;
+    btn.addEventListener("click", ()=> onFcOptionClick(btn, idx));
+    wrap.appendChild(btn);
+  });
+}
+function onFcOptionClick(btn, correctIdx){
+  if(state.fcLocked || btn.disabled) return;
+  const chosenIdx = parseInt(btn.dataset.idx, 10);
+  const fb = document.getElementById("fcFeedback");
+  if(chosenIdx === correctIdx){
+    state.fcLocked = true;
+    state.fcSeen++;
+    if(state.fcAttempts === 0) state.fcScore++;
+    btn.classList.add("opt-correct");
+    document.querySelectorAll("#fcOptions button").forEach(b=>b.disabled=true);
+    fb.textContent = "Richtig! ✅";
+    fb.className = "feedback correct";
+    document.getElementById("fcRevealTerm").textContent = VOCAB[correctIdx].t;
+    document.getElementById("fcRevealBlock").style.display = "block";
+    document.getElementById("fcKnownCount").textContent = state.fcScore;
+    document.getElementById("fcTotalSeen").textContent = state.fcSeen;
+  } else {
+    state.fcAttempts++;
+    btn.classList.add("opt-wrong");
+    btn.disabled = true;
+    fb.textContent = state.fcAttempts === 1
+      ? "Das ist leider nicht richtig. Versuch's noch mal! 💡 Lies die Erklärung noch einmal genau."
+      : "Fast! Es bleibt nur noch eine Möglichkeit.";
+    fb.className = "feedback wrong";
+  }
+}
+document.getElementById("fcTranslate").addEventListener("input", (e)=>{
+  const item = VOCAB[state.fcCurrentIdx];
+  if(item) state.translations[item.t] = e.target.value;
+  scheduleSave();
+});
+document.getElementById("fcNext").addEventListener("click", ()=>{
+  if(state.fcIndex < state.fcQueue.length-1){
+    state.fcIndex++;
+    renderFlashcard();
+  } else {
+    document.getElementById("fcProgress").style.width = "100%";
+    saveScore("fc", state.fcScore, state.fcQueue.length);
+    showResult(state.fcScore, state.fcQueue.length, "menu", ()=>startFlashcards(state.fcSection), "Karteikarten geschafft! 🗂️");
+  }
+});
+
+/* ---------------- ARTICLE QUIZ ---------------- */
+function startArticleQuiz(sec){
+  const pool = shuffle(bysection(ARTICLE_ITEMS, state.chapter, sec));
+  state.artQueue = pool.slice(0, Math.min(10, pool.length));
+  state.artIndex = 0; state.artScore = 0;
+  renderArticleQuiz();
+  showScreen("article");
+}
+function renderArticleQuiz(){
+  const item = state.artQueue[state.artIndex];
+  document.getElementById("artCounter").textContent = (state.artIndex+1)+" / "+state.artQueue.length;
+  document.getElementById("artProgress").style.width = Math.round((state.artIndex/state.artQueue.length)*100)+"%";
+  document.getElementById("artNoun").textContent = item.n;
+  document.getElementById("artFeedback").textContent = "";
+  document.getElementById("artFeedback").className = "feedback";
+  state.artAttempts = 0;
+  state.artLocked = false;
+  document.querySelectorAll("[data-art]").forEach(b=>{
+    b.disabled = false;
+    b.classList.remove("opt-correct","opt-wrong");
+  });
+}
+function nextArticleQuestion(){
+  if(state.artIndex < state.artQueue.length-1){
+    state.artIndex++;
+    renderArticleQuiz();
+  } else {
+    document.getElementById("artProgress").style.width = "100%";
+    saveScore("art", state.artScore, state.artQueue.length);
+    showResult(state.artScore, state.artQueue.length, "menu", ()=>startArticleQuiz("ALL"), "Artikel-Quiz beendet! 🎯");
+  }
+}
+document.querySelectorAll("[data-art]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(state.artLocked || btn.disabled) return;
+    const item = state.artQueue[state.artIndex];
+    const fb = document.getElementById("artFeedback");
+    const chosen = btn.getAttribute("data-art");
+    if(chosen === item.a){
+      state.artScore++;
+      state.artLocked = true;
+      btn.classList.add("opt-correct");
+      document.querySelectorAll("[data-art]").forEach(b=>b.disabled=true);
+      fb.textContent = "Richtig! ✅ " + item.a + " " + item.n;
+      fb.className = "feedback correct";
+      setTimeout(nextArticleQuestion, 1100);
+    } else {
+      state.artAttempts++;
+      btn.classList.add("opt-wrong");
+      btn.disabled = true;
+      if(state.artAttempts === 1){
+        fb.textContent = "Das ist leider nicht richtig. Versuch's noch mal! 💡 " + articleHint(item.n);
+      } else {
+        fb.textContent = "Fast! Es bleibt nur noch eine Möglichkeit – probier sie aus.";
+      }
+      fb.className = "feedback wrong";
+    }
+  });
+});
+document.getElementById("artHint").addEventListener("click", ()=>{
+  const item = state.artQueue[state.artIndex];
+  const fb = document.getElementById("artFeedback");
+  fb.textContent = "💡 " + articleHint(item.n);
+  fb.className = "feedback";
+});
+
+/* ---------------- GAP FILL (Multiple-Choice) ---------------- */
+function startGapFill(sec){
+  let pool = GAP_ITEMS.filter(g => g.k===state.chapter && (sec==="ALL" ? true : matchesGapSection(g, sec)));
+  if(pool.length === 0) pool = GAP_ITEMS.filter(g => g.k===state.chapter);
+  state.gapQueue = shuffle(pool);
+  state.gapIndex = 0; state.gapScore = 0;
+  renderGapFill();
+  showScreen("gap");
+}
+function matchesGapSection(g, sec){
+  return g.hint.startsWith(sec+":");
+}
+function renderGapFill(){
+  const item = state.gapQueue[state.gapIndex];
+  document.getElementById("gapCounter").textContent = (state.gapIndex+1)+" / "+state.gapQueue.length;
+  document.getElementById("gapProgress").style.width = Math.round((state.gapIndex/state.gapQueue.length)*100)+"%";
+  const sentence = (item.before ? item.before+" " : "") + "<span class='gap'>______</span>" + (item.after ? " "+item.after : "");
+  document.getElementById("gapSentence").innerHTML = sentence;
+  document.getElementById("gapFeedback").textContent = "";
+  document.getElementById("gapFeedback").className = "feedback";
+  state.gapAttempts = 0;
+  state.gapLocked = false;
+
+  const answerPool = [...new Set(GAP_ITEMS.filter(g=>g.k===state.chapter).map(g => g.answer))];
+  const distractors = shuffle(answerPool.filter(a => a !== item.answer)).slice(0,3);
+  const options = shuffle([item.answer, ...distractors]);
+  const wrap = document.getElementById("gapOptions");
+  wrap.innerHTML = "";
+  options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "btn-secondary";
+    btn.textContent = opt;
+    btn.dataset.opt = opt;
+    btn.addEventListener("click", ()=> onGapOptionClick(btn, item));
+    wrap.appendChild(btn);
+  });
+}
+document.getElementById("gapHint").addEventListener("click", ()=>{
+  const item = state.gapQueue[state.gapIndex];
+  const fb = document.getElementById("gapFeedback");
+  fb.textContent = "💡 Tipp: " + item.hint;
+  fb.className = "feedback";
+});
+function nextGapQuestion(){
+  if(state.gapIndex < state.gapQueue.length-1){
+    state.gapIndex++;
+    renderGapFill();
+  } else {
+    document.getElementById("gapProgress").style.width = "100%";
+    saveScore("gap", state.gapScore, state.gapQueue.length);
+    showResult(state.gapScore, state.gapQueue.length, "menu", ()=>startGapFill("ALL"), "Lückentext geschafft! ✏️");
+  }
+}
+function onGapOptionClick(btn, item){
+  if(state.gapLocked || btn.disabled) return;
+  const fb = document.getElementById("gapFeedback");
+  const chosen = btn.dataset.opt;
+  if(chosen === item.answer){
+    state.gapScore++;
+    state.gapLocked = true;
+    btn.classList.add("opt-correct");
+    document.querySelectorAll("#gapOptions button").forEach(b=>b.disabled=true);
+    fb.textContent = "Richtig! ✅";
+    fb.className = "feedback correct";
+    setTimeout(nextGapQuestion, 1100);
+  } else {
+    state.gapAttempts++;
+    btn.classList.add("opt-wrong");
+    btn.disabled = true;
+    fb.textContent = state.gapAttempts === 1
+      ? "Das ist leider nicht richtig. Versuch's noch mal! 💡 Tipp: " + item.hint
+      : "Fast! Es bleibt nur noch eine Möglichkeit.";
+    fb.className = "feedback wrong";
+  }
+}
+
+/* ---------------- MATCHING ---------------- */
+function startMatching(sec){
+  let pool = MATCH_ITEMS.filter(m => m.k===state.chapter);
+  pool = shuffle(pool).slice(0, Math.min(6, pool.length));
+  state.matchPairs = pool;
+  state.matchSelectedWord = null;
+  state.matchSolved = 0;
+  renderMatching();
+  showScreen("match");
+}
+function renderMatching(){
+  const wordsCol = document.getElementById("matchWords");
+  const defsCol = document.getElementById("matchDefs");
+  wordsCol.innerHTML = ""; defsCol.innerHTML = "";
+  document.getElementById("matchDoneBtns").style.display = "none";
+  document.getElementById("matchCounter").textContent = state.matchSolved + " / " + state.matchPairs.length;
+
+  const words = shuffle(state.matchPairs.map((p,idx)=>({idx, text:p.w})));
+  const defs = shuffle(state.matchPairs.map((p,idx)=>({idx, text:p.d})));
+
+  words.forEach(w=>{
+    const el = document.createElement("div");
+    el.className = "match-item";
+    el.textContent = w.text;
+    el.dataset.idx = w.idx;
+    el.addEventListener("click", ()=> onMatchWordClick(el, w.idx));
+    wordsCol.appendChild(el);
+  });
+  defs.forEach(d=>{
+    const el = document.createElement("div");
+    el.className = "match-item";
+    el.textContent = d.text;
+    el.dataset.idx = d.idx;
+    el.addEventListener("click", ()=> onMatchDefClick(el, d.idx));
+    defsCol.appendChild(el);
+  });
+}
+function onMatchWordClick(el, idx){
+  if(el.classList.contains("correct")) return;
+  document.querySelectorAll("#matchWords .match-item").forEach(w=>w.classList.remove("selected"));
+  el.classList.add("selected");
+  state.matchSelectedWord = idx;
+}
+function onMatchDefClick(el, idx){
+  if(el.classList.contains("correct") || state.matchSelectedWord === null) return;
+  const wordEl = document.querySelector('#matchWords .match-item[data-idx="'+state.matchSelectedWord+'"]');
+  if(state.matchSelectedWord === idx){
+    el.classList.add("correct");
+    if(wordEl) wordEl.classList.add("correct");
+    state.matchSolved++;
+    state.matchSelectedWord = null;
+    document.getElementById("matchCounter").textContent = state.matchSolved + " / " + state.matchPairs.length;
+    if(state.matchSolved === state.matchPairs.length){
+      document.getElementById("matchDoneBtns").style.display = "flex";
+    }
+  } else {
+    el.classList.add("wrong-flash");
+    if(wordEl) wordEl.classList.add("wrong-flash");
+    setTimeout(()=>{
+      el.classList.remove("wrong-flash");
+      if(wordEl) wordEl.classList.remove("wrong-flash");
+    }, 500);
+  }
+}
+document.getElementById("matchAgain").addEventListener("click", ()=> startMatching("ALL"));
+
+/* ---------------- RESULT SCREEN ---------------- */
+function showResult(score, total, returnTo, retryFn, text){
+  document.getElementById("resultScore").textContent = score;
+  document.getElementById("resultTotal").textContent = total;
+  document.getElementById("resultText").textContent = text || "Gut gemacht!";
+  const ratio = total>0 ? score/total : 0;
+  document.getElementById("resultEmoji").textContent = ratio>=0.8 ? "🎉" : ratio>=0.5 ? "👍" : "💪";
+  state.resultReturnTo = returnTo;
+  state.resultRetryFn = retryFn;
+  showScreen("result");
+}
+document.getElementById("resultRetry").addEventListener("click", ()=>{
+  if(state.resultRetryFn) state.resultRetryFn();
+});
+
+/* ---------------- WORDLIST ---------------- */
+function renderWordlist(){
+  const tbody = document.querySelector("#wordlistTable tbody");
+  tbody.innerHTML = "";
+  document.getElementById("checkStatus").textContent = "";
+  document.getElementById("checkLegend").style.display = "none";
+  VOCAB.forEach((item, i)=>{
+    if(item.k !== state.chapter) return;
+    const tr = document.createElement("tr");
+    tr.id = "wl-row-"+i;
+    const translation = state.translations[item.t] || "";
+    tr.innerHTML = "<td>"+item.t+"</td><td>"+item.s+"</td><td><span class='check-icon' id='wl-check-"+i+"'></span><span id='wl-text-"+i+"'>"+(translation ? escapeHtml(translation) : "…")+"</span></td>";
+    tbody.appendChild(tr);
+  });
+}
+function escapeHtml(str){
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+/* ---------------- ÜBERSETZUNGSPRÜFUNG (automatisch, unverbindlich) ----------------
+   Nutzt den kostenlosen, öffentlichen MyMemory-Übersetzungsdienst (kein API-Key,
+   kein Account, keine Kosten für die Lehrkraft nötig) und vergleicht die von den
+   Schüler:innen eingetragene Übersetzung grob mit einem Übersetzungsvorschlag.
+   Das ist KEINE zuverlässige Bewertung, sondern nur ein Hinweis. */
+function normalizeForCompare(s){
+  return (s||"").toLowerCase().trim()
+    .replace(/[.,!?;:()'"„“”‚’`]/g,"")
+    .replace(/\s+/g," ");
+}
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  if(m === 0) return n;
+  if(n === 0) return m;
+  const dp = new Array(n+1);
+  for(let j=0;j<=n;j++) dp[j] = j;
+  for(let i=1;i<=m;i++){
+    let prev = dp[0];
+    dp[0] = i;
+    for(let j=1;j<=n;j++){
+      const tmp = dp[j];
+      dp[j] = a[i-1] === b[j-1] ? prev : 1 + Math.min(prev, dp[j], dp[j-1]);
+      prev = tmp;
+    }
+  }
+  return dp[n];
+}
+function looksLikeMatch(answer, candidate){
+  const a = normalizeForCompare(answer);
+  const c = normalizeForCompare(candidate);
+  if(!a || !c) return false;
+  if(a === c) return true;
+  if(a.length >= 3 && c.length >= 3 && (c.includes(a) || a.includes(c))) return true;
+  const dist = levenshtein(a, c);
+  const sim = 1 - dist / Math.max(a.length, c.length);
+  return sim >= 0.6;
+}
+async function fetchTranslationCandidates(germanText, targetCode){
+  const url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(germanText) + "&langpair=de|" + targetCode;
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(), 7000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeout);
+    if(!res.ok) return null;
+    const data = await res.json();
+    const candidates = [];
+    if(data && data.responseData && data.responseData.translatedText) candidates.push(data.responseData.translatedText);
+    if(Array.isArray(data.matches)){
+      data.matches.forEach(m=>{ if(m && m.translation) candidates.push(m.translation); });
+    }
+    return candidates.length ? candidates : null;
+  }catch(e){
+    clearTimeout(timeout);
+    return null;
+  }
+}
+function setCheckIcon(i, kind){
+  const el = document.getElementById("wl-check-"+i);
+  if(!el) return;
+  if(kind === "ok"){ el.textContent = "✅"; el.className = "check-icon check-ok"; }
+  else if(kind === "warn"){ el.textContent = "⚠️"; el.className = "check-icon check-warn"; }
+  else if(kind === "na"){ el.textContent = "🔌"; el.className = "check-icon check-na"; }
+  else { el.textContent = ""; el.className = "check-icon"; }
+}
+async function checkAllTranslations(){
+  const btn = document.getElementById("btnCheckTranslations");
+  const status = document.getElementById("checkStatus");
+  const legend = document.getElementById("checkLegend");
+  legend.style.display = "block";
+
+  if(!state.langCode){
+    status.textContent = "Für deine gewählte Sprache ist die automatische Prüfung leider nicht verfügbar.";
+    return;
+  }
+  const toCheck = [];
+  VOCAB.forEach((item, i)=>{
+    if(item.k !== state.chapter) return;
+    const t = state.translations[item.t];
+    if(t && t.trim()) toCheck.push(i);
+  });
+  if(toCheck.length === 0){
+    status.textContent = "Noch keine eigenen Übersetzungen eingetragen – erst bei den Karteikarten übersetzen.";
+    return;
+  }
+
+  btn.disabled = true;
+  let done = 0, okCount = 0, warnCount = 0, naCount = 0;
+  for(const i of toCheck){
+    status.textContent = "Prüfe Übersetzungen … (" + (done+1) + " / " + toCheck.length + ")";
+    const item = VOCAB[i];
+    const answer = state.translations[item.t];
+    const candidates = await fetchTranslationCandidates(shortTerm(item.t), state.langCode);
+    if(!candidates){
+      setCheckIcon(i, "na");
+      naCount++;
+    } else {
+      const match = candidates.some(c => looksLikeMatch(answer, c));
+      setCheckIcon(i, match ? "ok" : "warn");
+      if(match) okCount++; else warnCount++;
+    }
+    done++;
+    await new Promise(r => setTimeout(r, 120));
+  }
+  btn.disabled = false;
+  status.textContent = "Fertig: ✅ " + okCount + " passt vermutlich · ⚠️ " + warnCount + " bitte selbst prüfen" + (naCount ? " · 🔌 " + naCount + " nicht prüfbar" : "") + ".";
+}
+document.getElementById("btnCheckTranslations").addEventListener("click", checkAllTranslations);
+</script>
+</body>
+</html>
